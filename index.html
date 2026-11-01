@@ -212,7 +212,28 @@ items.forEach((it,k)=>{const L=it.L,p=pid(L,it.s,it.b),n=L.n,y=k*3*rh,v=id=>$('#
 ['Product Name','Batch No.','M/C','FFA','FAL'].forEach((t,i)=>{cell(x,y,fw[i],t,{b:1});x+=fw[i]});cell(x,y,n*pw,'NET Weight  '+L.gm+' GM',{b:1});x+=n*pw;cell(x,y,av,'Avrg',{b:1});
 x=0;['','','(14-16)','','0.05 Max'].forEach((t,i)=>{cell(x,y+rh,fw[i],t,{fill:L.hc});x+=fw[i]});for(let i=1;i<=n;i++){cell(x,y+rh,pw,i,{fill:L.hc,b:1});x+=pw}cell(x,y+rh,av,avsTxt(L,it.s),{fill:L.hc,b:1});
 x=0;const ws=[...Array(n)].map((_,j)=>(+v(p+'_c'+j)).toFixed(2));[v(p+'_p'),v(pid(L,1,1)+'_bn'),(+v(p+'_m')).toFixed(2),'',num('fa'+it.s+L.id).toFixed(2)].forEach((t,i)=>{cell(x,y+2*rh,fw[i],t);x+=fw[i]});ws.forEach(t=>{cell(x,y+2*rh,pw,t);x+=pw});cell(x,y+2*rh,av,(ws.reduce((a,c)=>a+ +c,0)/n).toFixed(2),{b:1})});return cv}
-function copyImg(items,btn){s1canvas(items).toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);flash(btn,'Image copied')}catch(e){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Sheet1.png';a.click();flash(btn,'PNG saved')}})}
+function copyImg(items,btn){
+ let cv;
+ try{cv=s1canvas(items);}catch(e){console.error(e);flash(btn,'Image failed');return;}
+ const nm=(items.length>1?'Sheet1_All3':items[0].L.title.split(' - ')[0].replace(/[^A-Za-z0-9]/g,'')+'_s'+items[0].s+'b'+items[0].b)+'.png';
+ const blobP=(typeof cv.convertToBlob==='function')?cv.convertToBlob({type:'image/png'}):new Promise(r=>cv.toBlob(r,'image/png'));
+ const save=b=>{try{
+  const u=URL.createObjectURL(b),a=document.createElement('a');
+  a.href=u;a.download=nm;a.style.display='none';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{if(a.parentNode)a.parentNode.removeChild(a);try{URL.revokeObjectURL(u)}catch(_){}},4000);
+  flash(btn,'PNG saved');
+ }catch(e){flash(btn,'Could not save PNG')}};
+ let wrote=false;
+ try{
+  if(navigator.clipboard&&navigator.clipboard.write&&window.ClipboardItem){
+   /* pass the blob PROMISE so the copy starts while the tap gesture is still alive */
+   navigator.clipboard.write([new ClipboardItem({'image/png':blobP})]).then(()=>flash(btn,'Image copied'),()=>blobP.then(save));
+   wrote=true;
+  }
+ }catch(e){}
+ blobP.then(b=>{if(wrote)return;if(!b){flash(btn,'Image too large');return;}save(b);});
+}
 function xls(L,s){const rows=[...$('#'+L.id+'_b'+s).rows],n=L.n,lw=String.fromCharCode(76+n),e=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'),B='border:1px solid #000;text-align:center;font:10pt Calibri;',bl='background:#9CC3EE;font-weight:bold;',
 c=(v,st,x)=>`<td style="${B}${st||''}"${x||''}>${v}</td>`,rs=(t,w)=>c(t,bl+(w?'width:'+w+'px;':''),' rowspan="2"'),sh=SPEC.slice(0,0);
 let h='<tr><td></td>'+rs('Date',80)+rs('Time',50)+rs('Product Name',190)+rs('Batch No.',95)+['Moisture %','FFA %','FA %','Chloride %','Glycerin %','TFM %','Temp'].map(t=>c(t,bl)).join('')+c('NET Weight  '+L.gm+' GM',bl,` colspan="${n}"`)+rs('Avrg weight')+'</tr><tr><td></td>'+SPEC.map(t=>c(t,bl)).join('')+[...Array(n)].map((_,i)=>c(i+1,bl)).join('')+'</tr>';
