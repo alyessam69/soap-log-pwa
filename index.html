@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Soap Bar Daily Log Generator</title>
+<style>
+:root{--bg:#f3f6f5;--card:#fff;--ink:#17262b;--mut:#5d6f75;--line:#d3dedc;--acc:#0f766e;--on:#fff;--warn:#fff1c9;--head:#e2eeec}
+@media(prefers-color-scheme:dark){:root{--bg:#10191c;--card:#172428;--ink:#e6efee;--mut:#93a8ac;--line:#2b3f44;--acc:#2dd4bf;--on:#062a27;--warn:#4a3b0a;--head:#1f3338}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "Segoe UI",system-ui,Arial,sans-serif}
+nav{position:sticky;top:0;z-index:20;display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+nav b{margin-right:auto;font-size:15px}
+nav a{color:var(--ink);text-decoration:none;padding:5px 10px;border-radius:6px}
+nav a:hover{background:var(--head)}
+main{max-width:1500px;margin:0 auto;padding:14px}
+.grp{border:2px solid var(--ink);padding:6px;margin:0 0 24px}
+.grp .pw{margin:0;zoom:var(--z,1)}
+th,td{padding:8px 10px;font-size:14px}
+td[contenteditable]{min-width:66px}
+.pt{width:max-content;min-width:100%;font-size:14px}
+.pt th,.pt td{height:40px;min-width:70px}
+.pt th{padding:4px 8px}
+.pt input{font-size:15px;padding:9px 4px;min-width:70px}
+.pt td input[id$=_p]{min-width:200px}
+.pt td input[id$=_bn]{min-width:120px}
+section.pg{display:none}
+section.pg.on{display:block}
+.pt td.wc{min-width:0;width:60px;padding:0}
+.pt td.wc input{min-width:0;padding:9px 0;font-size:15px;text-align:center}
+body{padding-bottom:76px}
+#fab{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;padding:6px 8px;background:var(--card);border-top:1px solid var(--line)}
+#fab button{min-width:46px;min-height:42px;font-size:18px;padding:4px 10px}
+#fab label{flex-direction:row;align-items:center;gap:4px;color:var(--ink);font-size:13px}
+#fab input{width:auto}
+.stt{font-size:12px;color:var(--mut)}
+@media(max-width:700px){.pt td.wc input{font-size:16px;padding:12px 0}td[contenteditable]{min-width:78px;font-size:16px;padding:12px 8px}.pt input{font-size:16px;padding:12px 4px}.pt th,.pt td{height:48px}}
+nav a.on{background:var(--head);font-weight:600}
+section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:14px;margin-bottom:16px;scroll-margin-top:60px}
+h2{margin:0 0 10px;font-size:17px}
+nav label.as{flex-direction:row;align-items:center;gap:5px;color:var(--ink);font-size:13px}
+nav label.as input{width:auto}
+nav label.as select{width:auto;padding:3px 6px}
+#st{font-size:12px;color:var(--mut)}
+label.btn{flex-direction:row;color:var(--acc);border:1px solid var(--acc);border-radius:6px;padding:6px 12px;cursor:pointer;font-size:14px}
+h3{margin:16px 0 0;font-size:15px}
+.pw{overflow-x:auto;margin:6px 0}
+.pt{border-collapse:collapse;width:100%;font-size:12px}
+.pt th,.pt td{border:1px solid var(--ink);padding:0;text-align:center;height:26px}
+.pt th{background:var(--card);padding:2px 4px;white-space:nowrap}
+.pt .sp td{background:var(--hc);color:#17262b;font-weight:600;padding:2px 4px;white-space:nowrap}
+.pt td input[id$=_p],.pt td input[id$=_bn]{min-width:100px}
+.pt input{border:0;border-radius:0;background:transparent;text-align:center;padding:3px 0;width:100%;min-width:0;font-size:12px;-moz-appearance:textfield}
+.pt input::-webkit-inner-spin-button,.pt input::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.pt td.pn,.pt td.b,.pt td.mm,.pt td.ff{padding:2px 4px;white-space:nowrap}
+.pt td.mn{font-weight:600}
+.pt input:focus{outline:2px solid var(--acc);outline-offset:-2px}
+p.n{margin:8px 0 0;color:var(--mut);font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:10px}
+label{display:flex;flex-direction:column;font-size:12px;color:var(--mut);gap:3px}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:6px 8px;width:100%}
+button{font:inherit;cursor:pointer;border-radius:6px;border:1px solid var(--acc);background:transparent;color:var(--acc);padding:6px 12px}
+button.p{background:var(--acc);color:var(--on)}
+.bar{display:flex;gap:8px;margin:12px 0 8px;align-items:center;flex-wrap:wrap}
+.wrap{overflow:auto;max-height:66vh;border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{border:1px solid var(--line);padding:3px 8px;text-align:center}
+thead th{height:27px;position:sticky;top:0;background:var(--head);z-index:2}
+thead tr:nth-child(2) th{top:27px}
+td[contenteditable]:focus{outline:2px solid var(--acc);outline-offset:-2px}
+td.bad{background:var(--warn)}
+td.a{font-weight:600}
+.prof{display:grid;gap:6px;overflow-x:auto;padding-bottom:4px}
+.prof label{text-align:center}
+.prof input{padding:6px 3px;text-align:center}
+tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparent)}
+#syncBtn,#install{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer}
+#syncSt{font-size:11px;font-weight:600;color:var(--mut);border:1px solid var(--line);border-radius:6px;padding:3px 7px;white-space:nowrap}
+#syncSt[hidden],#install[hidden]{display:none}
+.syncwrap{position:fixed;inset:0;background:rgba(8,14,16,.6);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:56px 12px 12px}
+.syncwrap[hidden]{display:none}
+.syncbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;width:100%;max-width:430px;box-shadow:0 14px 44px rgba(0,0,0,.3)}
+.sbh{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sbh button{background:transparent;border:0;color:var(--mut);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
+.sl{display:block;font-size:12px;color:var(--mut);margin:9px 0}
+.sl textarea,.sl input{width:100%;margin-top:4px;font:inherit;font-size:13px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
+.srow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.scp{background:var(--acc);color:var(--on);border:0;border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+</style><link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Soap Log">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Soap Log">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+</head><body>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span></nav>
+<main>
+<section id="set" class="pg"><h2>Settings, notes and backup</h2><div id="sg" class="grid"></div>
+<p class="n">Each shift page (A, B, C) starts with its day settings and nine Sheet1 forms (three per line: #1 sets hours 1-3, #2 hours 4-6, #3 hours 7-8), followed by the data tables for Line 1, 2 and 3. Edit any Sheet1 form, or paste a block copied from Excel, and only the hours of that form regenerate. Keyboard: arrow keys, Tab and Enter move between cells like Excel (typing overwrites, F2 edits inside a cell). Cl and Gly are filled only at the test hours; TFM = ((100 - SUM(M/C to Gly) - 2) / 1.086). Amber Avrg means outside 109.5-110.5. Fill the sheet row above to copy TFM and Avrg weight as live formulas (Shift B and C continue 8 rows after each other).</p><div class="bar"><button id="ex">Export backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json" hidden></label><button id="rs">Reset all data</button></div></section>
+<div id="lines"></div>
+</main>
+<div id="fab"><button data-nav="0,-1">&#9664;</button><button data-nav="0,1">&#9654;</button><button data-nav="-1,0">&#9650;</button><button data-nav="1,0">&#9660;</button><label><input type="checkbox" id="autoc"> Auto-save</label><button class="p" data-sv>Save</button><span class="stt"></span></div>
+<script>
+const $=s=>document.querySelector(s);
+let L3k='lemon';try{L3k=localStorage.getItem('soapL3')||'royal'}catch(e){}
+const P3={lemon:{title:'Line 3 - Savannah Lemon Blossom&amp;Orange',sheet:'Line 3',p:'Savannah Lemon Blossom&amp;Orange',b:'3100260901',n:5,c:[151.9,151.2,151.1,151.0,151.1],m:16.5,t:45,fa:.05,gm:150,amin:null,amax:null,cl:[.75,.05],gl:[7.5,.1]},
+royal:{title:'Line 3 - Royal (90-10)',sheet:'Line 3 Royal (90-10)',p:'Royal Lather',b:'3100241612',n:6,c:[108.36,109.51,109.81,109.71,110.51,111.01],m:16.9,t:44.8,fa:.05,gm:110,amin:109.5,amax:110.5,cl:[.55,.1],gl:[7.55,.1]}};
+const LINES=[
+{id:'l1',title:'Line 1 - Savannah',sheet:'Line 1 Savannah',hc:'#9cc3ee',p:'Savannah Classic',b:'3100241611',n:8,c:[109.71,109.72,108.34,108.92,109.91,109.81,110.21,110.11],m:16.5,t:45,fa:.05,gm:110,amin:109.5,amax:110.5,cl:[.55,.1],gl:[7.55,.1]},
+{id:'l2',title:'Line 2 - Savannah (771)',sheet:'Line 2 Savannah (771)',hc:'#b6dba3',p:'Savannah Classic',b:'3100241611',n:10,c:[110.71,110.68,110.61,109.61,110.01,110.21,110.22,110.31,111.01,110.51],m:16.5,t:45,fa:.05,gm:110,amin:109.5,amax:110.5,cl:[.55,.1],gl:[7.55,.1]},
+Object.assign({id:'l3',hc:'#f5d08b'},P3[L3k])];
+const SHIFTS=[[1,'08:30-15:30',8],[2,'16:30-23:30',16],[3,'00:30-07:30',0]];const hrs=st=>[...Array(8)].map((_,i)=>String(st+i).padStart(2,'0')+':30');
+const head=L=>`<thead><tr><th rowspan="2">Date</th><th rowspan="2">Time</th><th rowspan="2">Product Name</th><th rowspan="2">Batch No.</th><th rowspan="2">M/C</th><th rowspan="2">FFA</th><th rowspan="2">FA</th><th rowspan="2">Cl</th><th rowspan="2">Gly</th><th rowspan="2">TFM</th><th rowspan="2">Temp</th><th colspan="${L.n}">NET Weight ${L.gm} GM</th><th rowspan="2">Avrg weight</th></tr><tr>${[...Array(L.n)].map((_,i)=>`<th>${i+1}</th>`).join('')}</tr></thead>`;
+const BL=[[0,3],[3,6],[6,8]],pid=(L,s,b)=>L.id+'s'+s+'b'+b;
+const rnd=(b,v,d)=>+(b+(Math.random()*2-1)*v).toFixed(d);
+const num=id=>parseFloat($('#'+id).value)||0;
+const fld=(id,lb,val,type)=>`<label>${lb}<input id="${id}" type="${type||'text'}" value="${val}" ${type=='number'?'step="any"':''}></label>`;
+const ti=(id,v,n)=>`<input id="${id}" value="${v}"${n?' data-n="1" inputmode="decimal"':''}>`;
+const today=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const TD={1:'08:30',2:'17:30',3:'01:30'};
+$('#sg').innerHTML=LINES.map(L=>fld(L.id+'_r',L.title+': sheet row of Shift A (optional)','','number')).join('');
+const form=(L,s,b)=>{const p=pid(L,s,b),H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],n=L.n;
+return `<div class="pw"><table class="pt" style="--hc:${L.hc}"><tr><th>Product Name</th><th>Batch No.</th><th>M/C</th><th>FFA</th><th>FAL</th><th colspan="${n}">NET Weight ${L.gm} GM</th><th>Avrg</th></tr><tr class="sp"><td></td><td></td><td>(14-16)</td><td></td><td>0.05 Max</td>${[...Array(n)].map((_,k)=>`<td class="wc">${k+1}</td>`).join('')}<td class="avs" data-l="${L.id}" data-s="${s}"></td></tr><tr><td>${ti(p+'_p',L.p)}</td><td>${(s==1&&b==1)?ti(p+'_bn',L.b):`<span class="bnm" data-l="${L.id}">${L.b}</span>`}</td><td>${ti(p+'_m',L.m.toFixed(2),1)}</td><td></td><td class="fal" data-l="${L.id}" data-s="${s}">${L.fa.toFixed(2)}</td>${[...Array(n)].map((_,k)=>`<td class="wc">${ti(p+'_c'+k,L.c[k].toFixed(2),1)}</td>`).join('')}<td class="mn" id="${p}_mean"></td></tr></table></div>`};
+const SN={1:'A',2:'B',3:'C'},SZO=[15,25,35,45,55,65,75,85,95,100].map(v=>`<option value="${v}"${v==100?' selected':''}>${v}%${v==100?' (current)':''}</option>`).join('');
+$('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>Shift ${SN[s]} (${r})</h2><div class="grid">`+fld('date'+s,'Date',today,'date')+fld('var'+s,'Variation +/-',0.2,'number')+fld('tests'+s,'Test hours (Cl / Gly / TFM)',TD[s])+`</div>`+LINES.map(L=>`<p class="n"><b>${L.title.split(' - ')[0]}</b> settings</p><div class="grid">`+fld('chl'+s+L.id,'Cl base',L.cl[0],'number')+fld('chlv'+s+L.id,'Cl +/-',L.cl[1],'number')+fld('gly'+s+L.id,'Gly base',L.gl[0],'number')+fld('glyv'+s+L.id,'Gly +/-',L.gl[1],'number')+fld('tmp'+s+L.id,'Temp',L.t.toFixed(1),'number')+fld('fa'+s+L.id,'FA base',L.fa.toFixed(2),'number')+fld('fav'+s+L.id,'FA +/-',0.01,'number')+fld('amin'+s+L.id,'Avrg min',L.amin==null?'':L.amin,'number')+fld('amax'+s+L.id,'Avrg max',L.amax==null?'':L.amax,'number')+'</div>').join('')+`<div class="bar"><button data-gs="${s}">Regenerate this shift</button></div><h3>Sheet1 forms (Line 1, 2, 3 for hours 1-3, then again for 4-6 and 7-8)</h3>${[1,2,3].map(b=>`<div class="grp">${LINES.map(L=>form(L,s,b)).join('')}<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:14px">Image size <select class="isz" style="width:auto">${SZO}</select></label>${LINES.map(L=>`<button data-img="${L.id}s${s}b${b}">Copy ${L.title.split(' - ')[0]} as image</button>`).join('')}<button class="p" data-imgg="s${s}b${b}">Copy all 3 as image</button><button data-sv>Save</button></div></div>`).join('')}<h3>Data</h3>${LINES.map(L=>`<div class="bar"><b>${L.title}</b><button class="p" data-copy="${L.id}" data-s="${s}">Copy ${L.title.split(' - ')[0]} rows</button><button data-xl="${L.id}" data-s="${s}">Export to Excel</button><button data-sv>Save</button></div><div class="wrap"><table>${head(L)}<tbody id="${L.id}_b${s}"></tbody></table></div>`).join('')}<p class="n">Copy one line at a time and paste it into the matching sheet at column B of the next empty rows.</p></section>`).join('');
+function tf(tr){const c=[...tr.cells],g=i=>parseFloat(c[i].textContent),t=c[9];if(isNaN(g(7))||isNaN(g(8))){t.textContent='';t.dataset.v='';return}const v=(100-[4,5,6,7,8].reduce((a,i)=>a+(g(i)||0),0)-2)/1.086;t.dataset.v=v.toFixed(3);t.textContent=v.toFixed(2)}
+const out=(L,s,m)=>{const lo=parseFloat($('#amin'+s+L.id).value),hi=parseFloat($('#amax'+s+L.id).value);return !isNaN(lo)&&!isNaN(hi)&&(m<lo||m>hi)};
+function avg(tr){tf(tr);const ws=[...tr.querySelectorAll('.w')],v=ws.map(c=>parseFloat(c.textContent)).filter(x=>!isNaN(x)),a=tr.querySelector('.a'),m=v.length?v.reduce((s,x)=>s+x)/v.length:0,mm=tr.closest('tbody').id.match(/^(l\d)_b(\d)$/);a.dataset.v=m.toFixed(3);a.textContent=m.toFixed(2);a.classList.toggle('bad',out(LINES.find(x=>x.id==mm[1]),+mm[2],m))}
+function meanB(L,s,b){const p=pid(L,s,b),v=[...Array(L.n)].map((_,k)=>num(p+'_c'+k)),m=v.reduce((a,c)=>a+c)/v.length,e=$('#'+p+'_mean');e.textContent=m.toFixed(2);e.classList.toggle('bad',out(L,s,m))}
+function reflag(){LINES.forEach(L=>SHIFTS.forEach(([s])=>{[1,2,3].forEach(b=>meanB(L,s,b));document.querySelectorAll('#'+L.id+'_b'+s+' td.a').forEach(a=>a.classList.toggle('bad',out(L,s,parseFloat(a.dataset.v))))}))}
+function syncFal(){document.querySelectorAll('td.fal').forEach(c=>c.textContent=num('fa'+c.dataset.s+c.dataset.l).toFixed(2));document.querySelectorAll('td.avs').forEach(c=>{const lo=$('#amin'+c.dataset.s+c.dataset.l).value,hi=$('#amax'+c.dataset.s+c.dataset.l).value;c.textContent=lo!==''&&hi!==''?lo+':'+hi:''})}
+function sync(){syncFal();SHIFTS.forEach(([s])=>{const d=$('#date'+s).value.split('-').reverse().join('/');LINES.forEach(L=>$('#'+L.id+'_b'+s).querySelectorAll('.d').forEach(c=>c.textContent=d))});reflag()}
+function setPB(L,s,b){const p=pid(L,s,b),[a,z]=BL[b-1],rows=$('#'+L.id+'_b'+s).rows;for(let i=a;i<z;i++)if(rows[i]){rows[i].querySelector('.pn').textContent=$('#'+p+'_p').value;rows[i].querySelector('.b').textContent=$('#'+pid(L,1,1)+'_bn').value}}
+function syncBatch(L){const v=$('#'+pid(L,1,1)+'_bn').value;document.querySelectorAll('.bnm[data-l="'+L.id+'"]').forEach(x=>x.textContent=v);SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>{if($('#'+L.id+'_b'+s).rows.length)setPB(L,s,b)}))}
+function rowHtml(L,s,b,hr,T,v){const p=pid(L,s,b),e=x=>`<td contenteditable inputmode="decimal">${x}</td>`;
+return `<tr><td class="d"></td><td>${hr}</td><td class="pn"></td><td class="b"></td>`+e(rnd(num(p+'_m'),v,2).toFixed(2))+'<td contenteditable inputmode="decimal"></td>'+e(Math.max(0,rnd(num('fa'+s+L.id),num('fav'+s+L.id),2)).toFixed(2))+
+(T?e(rnd(num('chl'+s+L.id),num('chlv'+s+L.id),2).toFixed(2))+e(rnd(num('gly'+s+L.id),num('glyv'+s+L.id),2).toFixed(2)):'<td contenteditable inputmode="decimal"></td>'.repeat(2))+'<td class="t"></td>'+
+e(rnd(num('tmp'+s+L.id),v,1).toFixed(1))+[...Array(L.n)].map((_,k)=>`<td class="w" contenteditable inputmode="decimal">${rnd(num(p+'_c'+k),v,2).toFixed(2)}</td>`).join('')+'<td class="a"></td></tr>'}
+function genBlock(L,s,b){const H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],tests=new Set($('#tests'+s).value.split(/[,\s]+/).filter(Boolean).map(x=>x.padStart(5,'0'))),v=num('var'+s),tb=$('#'+L.id+'_b'+s);
+for(let i=a;i<z;i++){const t=document.createElement('tbody');t.innerHTML=rowHtml(L,s,b,H[i],tests.has(H[i]),v);const r=t.rows[0];if(tb.rows[i])tb.rows[i].replaceWith(r);else tb.append(r)}
+setPB(L,s,b);sync();for(let i=a;i<z;i++)avg(tb.rows[i],L);meanB(L,s,b)}
+function gen(L){SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>genBlock(L,s,b)))}
+function tsv(L,s){const r0=parseInt($('#'+L.id+'_r').value),last=String.fromCharCode(76+L.n);
+return [...$('#'+L.id+'_b'+s).rows].map((tr,k)=>[...tr.cells].map((c,j,a)=>j==a.length-1?(r0?`=AVERAGE(M${r0+k+8*(s-1)}:${last}${r0+k+8*(s-1)})`:c.dataset.v):j==9?(c.dataset.v?(r0?`=((100-SUM(F${r0+k+8*(s-1)}:J${r0+k+8*(s-1)})-2)/1.086)`:c.dataset.v):''):c.textContent.trim()).join('\t')).join('\n')}
+async function copy(t,btn){try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove()}
+const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)}
+document.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
+if(b.id=='all')LINES.forEach(gen);
+else if(b.dataset.gen)gen(LINES.find(L=>L.id==b.dataset.gen));
+else if(b.dataset.copy)copy(tsv(LINES.find(L=>L.id==b.dataset.copy),b.dataset.s),b)});
+document.addEventListener('input',ev=>{const t=ev.target;
+if(t.tagName=='INPUT'){const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
+const tr=t.closest('tr');if(tr&&t.closest('.wrap tbody'))avg(tr)});
+document.addEventListener('change',ev=>{const m=ev.target.id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|t)$/);if(m)genBlock(LINES.find(L=>L.id==m[1]),+m[2],+m[3])});
+const ed=tr=>[...tr.querySelectorAll('td[contenteditable],input')];
+function pick(c){c.focus();if(c.select)c.select();else{const r=document.createRange(),g=getSelection();r.selectNodeContents(c);g.removeAllRanges();g.addRange(r)}}
+function go(el,dr,dc){const tr=el.closest('tr'),rows=tr.closest('.pt')?[...tr.closest('table').rows].filter(r=>ed(r).length):[...tr.closest('section').querySelectorAll('.wrap tbody tr')],ri=rows.indexOf(tr),cur=ed(tr);let nr=ri+dr,nc=cur.indexOf(el)+dc;
+if(dc){if(nc<0){nr=ri-1;nc=1e3}else if(nc>=cur.length){nr=ri+1;nc=0}}
+const t=rows[nr];if(!t)return;const l=ed(t);if(l.length)pick(l[Math.min(Math.max(nc,0),l.length-1)])}
+document.addEventListener('keydown',ev=>{const el=ev.target;if(!el.matches||!el.matches('td[contenteditable],.pt input'))return;
+if(ev.key=='F2'&&el.isContentEditable){ev.preventDefault();const r=document.createRange(),g=getSelection();r.selectNodeContents(el);r.collapse(false);g.removeAllRanges();g.addRange(r);return}
+const m={ArrowRight:[0,1],ArrowLeft:[0,-1],ArrowDown:[1,0],ArrowUp:[-1,0],Enter:[ev.shiftKey?-1:1,0],Tab:[0,ev.shiftKey?-1:1]}[ev.key];
+if(m){ev.preventDefault();go(el,m[0],m[1])}});
+function pasteForm(el,grid){const p=el.id.split('_')[0],mm=p.match(/^(l\d)s\d+b\d+$/);if(!mm)return false;const n=LINES.find(L=>L.id==mm[1]).n,isN=v=>/^-?\d+(\.\d+)?$/.test(v),rows=grid.filter(r=>r.some(v=>v!==''));let row=null;
+for(let i=rows.length-1;i>=0;i--)if(rows[i].filter(isN).length>=n){row=rows[i];break}
+if(!row)return false;
+const toks=row.filter(v=>v!==''),prod=toks.find(v=>/[A-Za-z\u0600-\u06FF]/.test(v)&&!/[:\/]/.test(v)),batch=toks.find(v=>/^\d{7,}$/.test(v));let nums=toks.filter(v=>isN(v)&&v!==batch);
+if(nums.length>n){const last=+nums[nums.length-1],mean=nums.slice(-n-1,-1).reduce((a,v)=>a+ +v,0)/n;if(Math.abs(last-mean)<.011)nums=nums.slice(0,-1)}
+const w=nums.slice(-n),head=nums.slice(0,Math.max(0,nums.length-n)),set=(id,v)=>{const x=$('#'+p+id);if(x){x.value=v;x.dispatchEvent(new Event('input',{bubbles:true}))}};
+if(prod)set('_p',prod);if(batch)set('_bn',batch);if(head.length)set('_m',(+head[0]).toFixed(2));if(head.length>1)set('_fa',(+head[head.length-1]).toFixed(2));
+w.forEach((v,k)=>set('_c'+k,(+v).toFixed(2)));$('#'+p+'_c0').dispatchEvent(new Event('change',{bubbles:true}));return true}
+document.addEventListener('paste',ev=>{const el=ev.target;if(!el.matches||!el.matches('td[contenteditable],.pt input'))return;
+const raw=(ev.clipboardData||window.clipboardData).getData('text').replace(/\r/g,'').replace(/\n+$/,'');if(!raw)return;ev.preventDefault();
+const nz=v=>v.trim().replace(/^"(.*)"$/,'$1').replace(/[\u0660-\u0669]/g,d=>d.charCodeAt(0)-1632).replace(/[\u066B,]/g,'.'),grid=raw.split('\n').map(r=>r.split('\t').map(nz));
+if(el.closest('.pt')&&(grid.length>1||grid[0].length>1)&&pasteForm(el,grid))return;
+const tr=el.closest('tr'),rows=tr.closest('.pt')?[...tr.closest('table').rows].filter(r=>ed(r).length):[...tr.closest('section').querySelectorAll('.wrap tbody tr')],ri=rows.indexOf(tr),ci=ed(tr).indexOf(el);let last=null;
+grid.forEach((line,r)=>{const t=rows[ri+r];if(!t)return;const l=ed(t);line.forEach((v,c)=>{const x=l[ci+c];if(!x)return;
+if(x.tagName=='INPUT'){if(v===''||(x.dataset.n&&isNaN(parseFloat(v))))return;x.value=v;x.dispatchEvent(new Event('input',{bubbles:true}));last=x}
+else{x.textContent=v;x.dispatchEvent(new Event('input',{bubbles:true}))}})});
+if(last)last.dispatchEvent(new Event('change',{bubbles:true}))});
+const KEY='soapLogV3',AK='soapLogAuto',stamp=t=>{document.querySelectorAll('#st,.stt').forEach(x=>x.textContent=t)};
+const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}},fetchS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
+function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(syncBatch);reflag()}
+const isL3=id=>/^l3|l3$/.test(id),rd=k=>{try{return JSON.parse(fetchS(k)||'null')}catch(e){return null}};
+const splitD=d=>{const c={v:{},t:{}},l={v:{},t:{}};['v','t'].forEach(w=>Object.entries((d&&d[w])||{}).forEach(([k,x])=>(isL3(k)?l:c)[w][k]=x));return [c,l]};
+function save(){const [c,l]=splitD(snap());stamp(store('soapLogV3',JSON.stringify(c))&&store('soapLogV3_'+L3k,JSON.stringify(l))?'Saved '+new Date().toLocaleTimeString():'Auto-save unavailable here: use Export backup')}
+let tm,skip=false;const later=()=>{if(!$('#auto').checked)return;clearTimeout(tm);tm=setTimeout(save,500)};
+['input','change','click'].forEach(t=>document.addEventListener(t,later));
+$('#auto').checked=fetchS(AK)!=='0';
+$('#auto').addEventListener('change',()=>{store(AK,$('#auto').checked?'1':'0');if($('#auto').checked)save();else stamp('Auto-save off')});
+addEventListener('beforeunload',()=>{if($('#auto').checked&&!skip)save()});
+document.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
+if(b.id=='sv')save();
+else if(b.id=='ex'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snap())],{type:'application/json'}));a.download='soap_log_backup_'+today+'.json';a.click()}
+else if(b.id=='rs'&&confirm('Delete all saved data and reset the page?')){skip=true;try{['soapLogV3','soapLogV3_royal','soapLogV3_lemon','soapLogV2','soapLogV2_royal','soapLogV1'].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}});
+$('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));save();stamp('Backup imported')}catch(_){stamp('Invalid backup file')}};r.readAsText(f)});
+function showPg(id){document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
+document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k)))}});
+const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);showPg(pe&&pe.classList.contains('pg')?pg0:'sh1');
+const avsTxt=(L,s)=>{const lo=$('#amin'+s+L.id).value,hi=$('#amax'+s+L.id).value;return lo!==''&&hi!==''?lo+':'+hi:''};
+const SPEC=['14-16','1.5 Max','0.05 Max','0.8 Max','5-7','MIN 69','42-44'];
+const flash=(b,t)=>{const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,1400)};
+function s1canvas(items){const fw=[200,120,70,60,86],pw=78,av=116,rh=34,sc=2*((+document.querySelector('.isz').value)||100)/100,wd=it=>fw.reduce((a,c)=>a+c)+it.L.n*pw+av,W=Math.max(...items.map(wd)),H=items.length*3*rh,cv=document.createElement('canvas');cv.width=(W+2)*sc;cv.height=(H+2)*sc;
+const g=cv.getContext('2d');g.scale(sc,sc);g.fillStyle='#fff';g.fillRect(0,0,W+2,H+2);g.textAlign='center';g.textBaseline='middle';
+const cell=(x,y,w,t,o)=>{o=o||{};if(o.fill){g.fillStyle=o.fill;g.fillRect(x+.5,y+.5,w,rh)}g.strokeStyle='#000';g.lineWidth=1;g.strokeRect(x+.5,y+.5,w,rh);g.fillStyle='#000';g.font=(o.b?'bold ':'')+'15px Calibri,"Segoe UI",Arial';g.fillText(t,x+w/2+.5,y+rh/2+1)};
+items.forEach((it,k)=>{const L=it.L,p=pid(L,it.s,it.b),n=L.n,y=k*3*rh,v=id=>$('#'+id).value;let x=0;
+['Product Name','Batch No.','M/C','FFA','FAL'].forEach((t,i)=>{cell(x,y,fw[i],t,{b:1});x+=fw[i]});cell(x,y,n*pw,'NET Weight  '+L.gm+' GM',{b:1});x+=n*pw;cell(x,y,av,'Avrg',{b:1});
+x=0;['','','(14-16)','','0.05 Max'].forEach((t,i)=>{cell(x,y+rh,fw[i],t,{fill:L.hc});x+=fw[i]});for(let i=1;i<=n;i++){cell(x,y+rh,pw,i,{fill:L.hc,b:1});x+=pw}cell(x,y+rh,av,avsTxt(L,it.s),{fill:L.hc,b:1});
+x=0;const ws=[...Array(n)].map((_,j)=>(+v(p+'_c'+j)).toFixed(2));[v(p+'_p'),v(pid(L,1,1)+'_bn'),(+v(p+'_m')).toFixed(2),'',num('fa'+it.s+L.id).toFixed(2)].forEach((t,i)=>{cell(x,y+2*rh,fw[i],t);x+=fw[i]});ws.forEach(t=>{cell(x,y+2*rh,pw,t);x+=pw});cell(x,y+2*rh,av,(ws.reduce((a,c)=>a+ +c,0)/n).toFixed(2),{b:1})});return cv}
+function copyImg(items,btn){s1canvas(items).toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);flash(btn,'Image copied')}catch(e){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='Sheet1.png';a.click();flash(btn,'PNG saved')}})}
+function xls(L,s){const rows=[...$('#'+L.id+'_b'+s).rows],n=L.n,lw=String.fromCharCode(76+n),e=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'),B='border:1px solid #000;text-align:center;font:10pt Calibri;',bl='background:#9CC3EE;font-weight:bold;',
+c=(v,st,x)=>`<td style="${B}${st||''}"${x||''}>${v}</td>`,rs=(t,w)=>c(t,bl+(w?'width:'+w+'px;':''),' rowspan="2"'),sh=SPEC.slice(0,0);
+let h='<tr><td></td>'+rs('Date',80)+rs('Time',50)+rs('Product Name',190)+rs('Batch No.',95)+['Moisture %','FFA %','FA %','Chloride %','Glycerin %','TFM %','Temp'].map(t=>c(t,bl)).join('')+c('NET Weight  '+L.gm+' GM',bl,` colspan="${n}"`)+rs('Avrg weight')+'</tr><tr><td></td>'+SPEC.map(t=>c(t,bl)).join('')+[...Array(n)].map((_,i)=>c(i+1,bl)).join('')+'</tr>';
+const F=['dd\\/mm\\/yyyy','h\\:mm','@','0','0\\.00','0\\.00','0\\.00','0\\.00','0\\.00','0\\.00','0\\.0'];
+rows.forEach((tr,i)=>{const r=i+3,t=[...tr.cells].map(x=>x.textContent.trim());h+='<tr><td></td>';
+t.forEach((v,j)=>{const nf=j<11?F[j]:'0\\.00',st=`mso-number-format:'${nf}';`;
+if(j==9&&v!=='')h+=c(v,st,` x:fmla="=((100-SUM(F${r}:J${r})-2)/1.086)"`);else if(j==t.length-1)h+=c(v,st,` x:fmla="=AVERAGE(M${r}:${lw}${r})"`);else h+=c(e(v),st)});h+='</tr>'});
+const doc='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="utf-8"></head><body><table>'+h+'</table></body></html>',a=document.createElement('a');
+a.href=URL.createObjectURL(new Blob(['\ufeff'+doc],{type:'application/vnd.ms-excel'}));a.download=L.title.split(' - ')[0].replace(' ','')+'_Shift'+SN[s]+'_'+$('#date'+s).value+'.xls';a.click()}
+document.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;let m;
+if(b.dataset.img&&(m=b.dataset.img.match(/^(l\d)s(\d)b(\d)$/)))copyImg([{L:LINES.find(L=>L.id==m[1]),s:+m[2],b:+m[3]}],b);
+else if(b.dataset.imgg&&(m=b.dataset.imgg.match(/^s(\d)b(\d)$/)))copyImg(LINES.map(L=>({L,s:+m[1],b:+m[2]})),b);
+else if(b.dataset.xl){xls(LINES.find(L=>L.id==b.dataset.xl),+b.dataset.s);flash(b,'Exported')}
+else if(b.dataset.nav!==undefined){const d=b.dataset.nav.split(',').map(Number);if(lastEl)go(lastEl,d[0],d[1])}
+else if(b.hasAttribute('data-sv'))save()});
+const zoomTo=v=>document.documentElement.style.setProperty('--z',v/100),svz=fetchS('soapLogImg');if(svz)document.querySelectorAll('.isz').forEach(x=>x.value=svz);zoomTo(svz||100);
+document.addEventListener('change',ev=>{if(ev.target.classList&&ev.target.classList.contains('isz')){const v=ev.target.value;document.querySelectorAll('.isz').forEach(x=>x.value=v);store('soapLogImg',v);zoomTo(v)}});
+let lastEl=null;
+document.addEventListener('focusin',ev=>{const e=ev.target;if(e.matches&&e.matches('td[contenteditable],.pt input')){lastEl=e;setTimeout(()=>{if(document.activeElement===e)pick(e)},0)}});
+['mousedown','pointerdown'].forEach(t=>$('#fab').addEventListener(t,ev=>{if(ev.target.closest('button'))ev.preventDefault()}));
+$('#autoc').checked=$('#auto').checked;
+$('#autoc').addEventListener('change',()=>{$('#auto').checked=$('#autoc').checked;$('#auto').dispatchEvent(new Event('change',{bubbles:true}))});
+$('#auto').addEventListener('change',()=>{$('#autoc').checked=$('#auto').checked});
+$('#l3sel').value=L3k;
+$('#l3sel').addEventListener('change',()=>{save();skip=true;try{localStorage.setItem('soapL3',$('#l3sel').value)}catch(e){}location.reload()});
+let saved=null;const nw=rd('soapLogV3');
+if(nw){const l=rd('soapLogV3_'+L3k)||{v:{},t:{}};saved={v:{...nw.v,...l.v},t:{...nw.t,...l.t}}}
+else{const o2=rd('soapLogV2'),o1=rd('soapLogV1'),base=o2||o1;if(base){const c=splitD(base)[0],l=splitD(L3k=='lemon'?o2:o1)[1];saved={v:{...c.v,...l.v},t:{...c.t,...l.t}}}}
+if(saved){apply(saved);LINES.forEach(L=>{if(!$('#'+L.id+'_b1').rows.length)gen(L)});stamp('Restored saved data')}else LINES.forEach(gen);
+</script><script>
+if('serviceWorker' in navigator && location.protocol!=='file:'){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+</script>
+<script>
+/* ---------------- cloud sync (phone <-> PC) ----------------
+   The state is split into 4 buckets (Shift A / B / C + shared fields) and
+   merged per bucket by timestamp, so two devices can work at the same time.
+   The copy in the cloud is always encrypted with the PIN (AES-GCM+PBKDF2). */
+var SYNC={code:'',pin:'',salt:'',ts:{},hash:{},last:0,state:'off',applying:false};
+var DEFCODE='https://soap-lab-shift-sync-default-rtdb.europe-west1.firebasedatabase.app/lab/soap-log-7c4e19a83b2f46d0a95e17cb.json';
+var DEFPIN='2780';
+var SYNCB=['S1','S2','S3','G'];
+function sRead(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
+function sWrite(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+function syncLoad(){
+ try{
+  var p=sRead('soaplog_sync_pin',null);
+  SYNC.pin=(p===null?DEFPIN:p);
+  SYNC.code=sRead('soaplog_sync_code','')||DEFCODE;
+  SYNC.salt=sRead('soaplog_sync_salt','');
+  SYNC.ts=JSON.parse(sRead('soaplog_sync_ts','{}'))||{};
+  SYNC.hash=JSON.parse(sRead('soaplog_sync_hash','{}'))||{};
+ }catch(e){}
+}
+function syncPersist(){
+ sWrite('soaplog_sync_pin',SYNC.pin);sWrite('soaplog_sync_code',SYNC.code);
+ sWrite('soaplog_sync_salt',SYNC.salt);sWrite('soaplog_sync_ts',JSON.stringify(SYNC.ts));
+ sWrite('soaplog_sync_hash',JSON.stringify(SYNC.hash));
+}
+function syncBucket(id){
+ var m=id.match(/s(\d)b\d/);if(m)return 'S'+m[1];
+ m=id.match(/^(?:date|var|tests)(\d)/);if(m)return 'S'+m[1];
+ m=id.match(/^[a-z]+(\d)l\d/);if(m)return 'S'+m[1];
+ return 'G';
+}
+function syncHash(s){var h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return ''+(h>>>0);}
+function syncBuckets(){
+ var s=snap(),b={},i;
+ for(i=0;i<SYNCB.length;i++)b[SYNCB[i]]={v:{},t:{}};
+ Object.keys(s.v).forEach(function(k){b[syncBucket(k)].v[k]=s.v[k]});
+ Object.keys(s.t).forEach(function(k){b[syncBucket(k)].t[k]=s.t[k]});
+ return b;
+}
+function syncCfg(){
+ if(!SYNC.pin)return null;
+ var c=(SYNC.code||DEFCODE||'').trim();if(!c)return null;
+ var i=c.indexOf('|'),url=(i<0?c:c.slice(0,i)).trim(),key=(i<0?'':c.slice(i+1).trim());
+ var h={};if(key)h['X-Master-Key']=key;
+ return {url:url,headers:h};
+}
+function b64(b){var s='',i;for(i=0;i<b.length;i++)s+=String.fromCharCode(b[i]);return btoa(s)}
+function unb64(s){var b=atob(s),a=new Uint8Array(b.length),i;for(i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return a}
+function syncCryptoOk(){return !!(window.crypto&&window.crypto.subtle)}
+async function syncKey(saltB64){
+ if(!SYNC.pin)return null;
+ var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(SYNC.pin),'PBKDF2',false,['deriveKey']);
+ return crypto.subtle.deriveKey({name:'PBKDF2',salt:unb64(saltB64),iterations:120000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
+}
+async function syncRead(cfg){
+ var r=await fetch(cfg.url,{headers:cfg.headers,cache:'no-store'});
+ if(r.status===404)return null;
+ if(!r.ok)throw new Error('HTTP '+r.status);
+ var body=await r.json();if(!body)return null;
+ if(body.enc==='aesgcm'){
+  if(!SYNC.pin)throw new Error('PIN needed');
+  var key=await syncKey(body.salt);
+  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(body.iv)},key,unb64(body.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+ }
+ return body;
+}
+function syncStatus(msg){
+ var el=document.getElementById('syncSt');if(!el)return;
+ el.hidden=!SYNC.pin;
+ if(msg)el.textContent=msg;
+ var t=new Date(SYNC.last);
+ el.textContent=SYNC.state==='ok'?('Synced '+(t.getHours()<10?'0':'')+t.getHours()+':'+(t.getMinutes()<10?'0':'')+t.getMinutes())
+  :(SYNC.state==='err'?'Sync error':(SYNC.state==='busy'?'Syncing...':'Sync off'));
+ el.title=msg||'';
+}
+function syncErr(e){SYNC.state='err';syncStatus(String((e&&e.message)||e));}
+async function syncPush(){
+ var cfg=syncCfg();if(!cfg)return;
+ var remote=await syncRead(cfg);            /* throws if we cannot decrypt -> never overwrite */
+ var cur=syncBuckets(),ts=(remote&&remote.ts)||{},b=(remote&&remote.b)||{},now=Date.now(),i;
+ for(i=0;i<SYNCB.length;i++){
+  var k=SYNCB[i],ser=JSON.stringify(cur[k]),h=syncHash(ser);
+  if(SYNC.hash[k]!==h){SYNC.ts[k]=now;SYNC.hash[k]=h;}
+  var myTs=SYNC.ts[k]||0,rTs=ts[k]||0;
+  if(myTs>=rTs){ts[k]=myTs;b[k]=cur[k];}
+  else{SYNC.hash[k]=syncHash(JSON.stringify(b[k]));}
+ }
+ var plain={v:1,ts:ts,b:b},out=plain;
+ if(SYNC.pin&&syncCryptoOk()){
+  if(!SYNC.salt){SYNC.salt=b64(crypto.getRandomValues(new Uint8Array(16)));syncPersist();}
+  var key=await syncKey(SYNC.salt),iv=crypto.getRandomValues(new Uint8Array(12));
+  var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,new TextEncoder().encode(JSON.stringify(plain)));
+  out={v:1,enc:'aesgcm',salt:SYNC.salt,iv:b64(iv),ct:b64(new Uint8Array(ct))};
+ }
+ var r=await fetch(cfg.url,{method:'PUT',headers:Object.assign({},cfg.headers,{'Content-Type':'application/json'}),body:JSON.stringify(out)});
+ if(!r.ok)throw new Error('HTTP '+r.status);
+ SYNC.last=Date.now();SYNC.state='ok';syncPersist();syncStatus();
+}
+async function syncPull(){
+ var cfg=syncCfg();if(!cfg)return;
+ var rem=await syncRead(cfg);if(!rem||!rem.b)return;
+ var i,k,changed=false;
+ for(i=0;i<SYNCB.length;i++){
+  k=SYNCB[i];var r=rem.b[k];if(!r)continue;
+  var rTs=(rem.ts&&rem.ts[k])||0,lTs=SYNC.ts[k]||0;
+  if(rTs>lTs){
+   SYNC.applying=true;
+   try{apply(r);}finally{SYNC.applying=false;}
+   SYNC.ts[k]=rTs;SYNC.hash[k]=syncHash(JSON.stringify(r));changed=true;
+  }
+ }
+ if(changed)syncPersist();
+ SYNC.last=Date.now();SYNC.state='ok';syncStatus();
+}
+async function syncNow(){SYNC.state='busy';syncStatus();try{await syncPull();await syncPush();}catch(e){syncErr(e)}}
+var syncTimer=null;
+function syncTouch(){
+ if(SYNC.applying||!SYNC.pin)return;
+ clearTimeout(syncTimer);
+ syncTimer=setTimeout(function(){SYNC.state='busy';syncStatus();syncPush().catch(syncErr)},1200);
+ SYNC.state='busy';syncStatus();
+}
+/* ---------------- sync panel ---------------- */
+function syncPanel(){
+ if(document.getElementById('syncPanel'))return;
+ var d=document.createElement('div');
+ d.id='syncPanel';d.className='syncwrap';d.setAttribute('hidden','');
+ d.innerHTML='<div class="syncbox"><div class="sbh"><b>Cloud sync</b><button id="syncClose" type="button">&times;</button></div>'+
+  '<p class="hint" id="syncHint">Sync is ON - the PIN is already set, you only enter it once per device.<br>Data is encrypted before it leaves the device.</p>'+
+  '<label class="sl">Sync code<textarea id="syncCode" rows="2" spellcheck="false"></textarea></label>'+
+  '<label class="sl">PIN (optional)<input id="syncPin" type="password" inputmode="numeric" placeholder="e.g. 2780"></label>'+
+  '<div class="srow"><button id="syncSave" class="scp" type="button">Save &amp; sync</button>'+
+  '<button id="syncNow" class="scp" type="button">Sync now</button>'+
+  '<button id="syncCopy" class="scp" type="button">Copy link</button></div>'+
+  '<div class="hint" id="syncMsg"></div></div>';
+ document.body.appendChild(d);
+ d.querySelector('#syncClose').onclick=function(){d.setAttribute('hidden','')};
+ d.querySelector('#syncCode').value=SYNC.code||DEFCODE;
+ d.querySelector('#syncPin').value=SYNC.pin;
+ d.querySelector('#syncHint').textContent=SYNC.pin
+  ?'Sync is ON. The PIN is saved on this device - you will not be asked for it again.'
+  :'Sync is OFF. Enter a PIN to encrypt and enable the cloud sync.';
+ d.querySelector('#syncSave').onclick=function(){
+  SYNC.code=(d.querySelector('#syncCode').value||'').trim()||DEFCODE;
+  SYNC.pin=(d.querySelector('#syncPin').value||'').trim();
+  if(!SYNC.pin){d.querySelector('#syncMsg').textContent='Enter a PIN - it encrypts your data in the cloud (same PIN on every device).';return;}
+  syncPersist();syncNow();
+  d.querySelector('#syncMsg').textContent='Saved. Running first sync...';
+ };
+ d.querySelector('#syncNow').onclick=function(){syncNow()};
+ d.querySelector('#syncCopy').onclick=function(){
+  var url=(SYNC.code||DEFCODE);
+  try{
+   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url);
+    d.querySelector('#syncMsg').textContent='App link copied - send it to your team.';}
+   else d.querySelector('#syncMsg').textContent='App link: '+url;
+  }catch(e){d.querySelector('#syncMsg').textContent='App link: '+url}
+ };
+}
+(function(){
+ syncLoad();
+ var btn=document.getElementById('syncBtn');
+ if(btn)btn.onclick=function(){syncPanel();var p=document.getElementById('syncPanel');if(p)p.removeAttribute('hidden')};
+ /* push on every edit, independent of the app's own auto-save switch */
+ document.addEventListener('input',syncTouch,{passive:true});
+ document.addEventListener('change',syncTouch,{passive:true});
+ if(typeof window.save==='function'){
+  var _save=window.save;
+  window.save=function(){var r=_save.apply(this,arguments);syncTouch();return r};
+ }
+ syncStatus();
+ if(syncCfg()){
+  syncNow().catch(syncErr);
+  setInterval(function(){if(!document.hidden)syncPull().catch(syncErr)},45000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)syncPull().catch(syncErr)});
+ }
+ /* install prompt */
+ var ib=document.getElementById('install'),deferred=null;
+ var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+ window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;if(ib)ib.hidden=false});
+ if(isIOS&&ib)ib.hidden=false;
+ if(ib)ib.addEventListener('click',function(){
+  if(deferred){deferred.prompt();deferred.userChoice.then(function(){deferred=null;if(ib)ib.hidden=true},function(){deferred=null});return;}
+  if(typeof stamp==='function')stamp('Browser menu > Add to Home screen');
+ });
+ /* reload when a new service worker takes over */
+ if('serviceWorker' in navigator){
+  navigator.serviceWorker.addEventListener('controllerchange',function(){setTimeout(function(){location.reload()},150)});
+ }
+})();
+</script>
+</body></html>
