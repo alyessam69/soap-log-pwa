@@ -1,7 +1,7 @@
 // Soap Bar Daily Log - service worker
 // Network first for the app shell (a new index.html is picked up as soon as you
 // are online, bypassing the CDN cache), the cache is the offline fallback.
-const CACHE = 'soaplog-v2';
+const CACHE = 'soaplog-v3';
 const SHELL = [
   './',
   './index.html',
@@ -22,7 +22,7 @@ self.addEventListener('install', (e) => {
 });
 
 self.addEventListener('message', (e) => {
-  if (e.data === 'skip-waiting') self.skipWaiting();
+  if (e.data === 'skip-waiting' || (e.data && e.data.type === 'SKIP_WAITING')) self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
