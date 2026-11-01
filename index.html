@@ -97,7 +97,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v2.5</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v2.6</span></nav>
 <main>
 <section id="set" class="pg"><h2>Settings, notes and backup</h2><div id="sg" class="grid"></div>
 <p class="n">Each shift page (A, B, C) starts with its day settings and nine Sheet1 forms (three per line: #1 sets hours 1-3, #2 hours 4-6, #3 hours 7-8), followed by the data tables for Line 1, 2 and 3. Edit any Sheet1 form, or paste a block copied from Excel, and only the hours of that form regenerate. Keyboard: arrow keys, Tab and Enter move between cells like Excel (typing overwrites, F2 edits inside a cell). Cl and Gly are filled only at the test hours; TFM = ((100 - SUM(M/C to Gly) - 2) / 1.086). Amber Avrg means outside 109.5-110.5. Fill the sheet row above to copy TFM and Avrg weight as live formulas (Shift B and C continue 8 rows after each other).</p><div class="bar"><button id="ex">Export backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json" hidden></label><button id="rs">Reset all data</button></div></section>
@@ -130,7 +130,7 @@ $('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>S
 function tf(tr){const c=[...tr.cells],g=i=>parseFloat(c[i].textContent),t=c[9];if(isNaN(g(7))||isNaN(g(8))){t.textContent='';t.dataset.v='';return}const v=(100-[4,5,6,7,8].reduce((a,i)=>a+(g(i)||0),0)-2)/1.086;t.dataset.v=v.toFixed(3);t.textContent=v.toFixed(2)}
 const out=(L,s,m)=>{const lo=parseFloat($('#amin'+s+L.id).value),hi=parseFloat($('#amax'+s+L.id).value);return !isNaN(lo)&&!isNaN(hi)&&(m<lo||m>hi)};
 function avg(tr){tf(tr);const ws=[...tr.querySelectorAll('.w')],v=ws.map(c=>parseFloat(c.textContent)).filter(x=>!isNaN(x)),a=tr.querySelector('.a'),m=v.length?v.reduce((s,x)=>s+x)/v.length:0,mm=tr.closest('tbody').id.match(/^(l\d)_b(\d)$/);a.dataset.v=m.toFixed(3);a.textContent=m.toFixed(2);a.classList.toggle('bad',out(LINES.find(x=>x.id==mm[1]),+mm[2],m))}
-function meanB(L,s,b){const p=pid(L,s,b),v=[...Array(L.n)].map((_,k)=>num(p+'_c'+k)),m=v.reduce((a,c)=>a+c)/v.length,e=$('#'+p+'_mean');e.textContent=m.toFixed(2);e.classList.toggle('bad',out(L,s,m))}
+function meanB(L,s,b){const p=pid(L,s,b),v=[...Array(L.n)].map((_,k)=>num(p+'_c'+k)),m=v.reduce((a,c)=>a+c)/v.length,e=$('#'+p+'_mean');e.textContent=m.toFixed(2)}
 function reflag(){LINES.forEach(L=>SHIFTS.forEach(([s])=>{[1,2,3].forEach(b=>meanB(L,s,b));document.querySelectorAll('#'+L.id+'_b'+s+' td.a').forEach(a=>a.classList.toggle('bad',out(L,s,parseFloat(a.dataset.v))))}))}
 function syncFal(){document.querySelectorAll('td.fal').forEach(c=>c.textContent=num('fa'+c.dataset.s+c.dataset.l).toFixed(2));document.querySelectorAll('td.avs').forEach(c=>{const lo=$('#amin'+c.dataset.s+c.dataset.l).value,hi=$('#amax'+c.dataset.s+c.dataset.l).value;c.textContent=lo!==''&&hi!==''?lo+'-'+hi:''})}
 function sync(){syncFal();SHIFTS.forEach(([s])=>{const d=$('#date'+s).value.split('-').reverse().join('/');LINES.forEach(L=>$('#'+L.id+'_b'+s).querySelectorAll('.d').forEach(c=>c.textContent=d))});reflag()}
@@ -182,7 +182,7 @@ grid.forEach((line,r)=>{const t=rows[ri+r];if(!t)return;const l=ed(t);line.forEa
 if(x.tagName=='INPUT'){if(v===''||(x.dataset.n&&isNaN(parseFloat(v))))return;x.value=v;x.dispatchEvent(new Event('input',{bubbles:true}));last=x}
 else{x.textContent=v;x.dispatchEvent(new Event('input',{bubbles:true}))}})});
 if(last)last.dispatchEvent(new Event('change',{bubbles:true}))});
-const KEY='soapLogV3',AK='soapLogAuto',stamp=t=>{document.querySelectorAll('#st,.stt').forEach(x=>x.textContent=t)};
+const KEY='soapLogV3',AK='soapLogAuto',stamp=t=>{document.querySelectorAll('#st,.stt').forEach(x=>x.textContent=t);return t};
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}},fetchS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
 function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(syncBatch);reflag()}
@@ -260,11 +260,28 @@ $('#autoc').checked=$('#auto').checked;
 $('#autoc').addEventListener('change',()=>{$('#auto').checked=$('#autoc').checked;$('#auto').dispatchEvent(new Event('change',{bubbles:true}))});
 $('#auto').addEventListener('change',()=>{$('#autoc').checked=$('#auto').checked});
 $('#l3sel').value=L3k;
-$('#l3sel').addEventListener('change',()=>{save();skip=true;try{localStorage.setItem('soapL3',$('#l3sel').value)}catch(e){}location.reload()});
+$('#l3sel').addEventListener('change',()=>{const nv=$('#l3sel').value;save();skip=true;try{
+  localStorage.setItem('soapL3',nv);
+  /* the old cloud layout mixed the two products: if the saved data of this
+     product is really the other product's, drop it and start fresh */
+  const o=nv=='lemon'?'royal':'lemon',P=P3[o],b=rd('soapLogV3_'+nv);
+  if(b&&b.v&&P.amin!=null){const lo=parseFloat(b.v['amin1l3']),hi=parseFloat(b.v['amax1l3']);
+    if(Math.abs(lo-P.amin)<0.001&&Math.abs(hi-P.amax)<0.001)localStorage.removeItem('soapLogV3_'+nv);}
+}catch(e){}location.reload()});
 let saved=null;const nw=rd('soapLogV3');
 if(nw){const l=rd('soapLogV3_'+L3k)||{v:{},t:{}};saved={v:{...nw.v,...l.v},t:{...nw.t,...l.t}}}
 else{const o2=rd('soapLogV2'),o1=rd('soapLogV1'),base=o2||o1;if(base){const c=splitD(base)[0],l=splitD(L3k=='lemon'?o2:o1)[1];saved={v:{...c.v,...l.v},t:{...c.t,...l.t}}}}
-if(saved){apply(saved);LINES.forEach(L=>{if(!$('#'+L.id+'_b1').rows.length)gen(L)});stamp('Restored saved data')}else LINES.forEach(gen);
+if(saved){
+ /* the old cloud layout mixed the two Line 3 products: if the saved line 3
+    data belongs to the other product, ignore it and start from the defaults */
+ const _o=L3k=='lemon'?'royal':'lemon',_P=P3[_o],_sv=saved.v||{};
+ if(_P.amin!=null){const _lo=parseFloat(_sv['amin1l3']),_hi=parseFloat(_sv['amax1l3']);
+  if(Math.abs(_lo-_P.amin)<0.001&&Math.abs(_hi-_P.amax)<0.001){
+   Object.keys(_sv).forEach(k=>{if(/l3/.test(k))delete _sv[k]});
+   Object.keys(saved.t||{}).forEach(k=>{if(/l3/.test(k))delete saved.t[k]});
+   stamp('Line 3 data was reset - product mix fixed');
+  }}
+ apply(saved);LINES.forEach(L=>{if(!$('#'+L.id+'_b1').rows.length)gen(L)});if(!/reset/.test(stamp))stamp('Restored saved data')}else LINES.forEach(gen);
 </script><script>
 if('serviceWorker' in navigator && location.protocol!=='file:'){
  window.addEventListener('load',()=>{
@@ -292,7 +309,10 @@ if('serviceWorker' in navigator && location.protocol!=='file:'){
 var SYNC={code:'',pin:'',salt:'',ts:{},hash:{},last:0,state:'off',applying:false};
 var DEFCODE='https://soap-lab-shift-sync-default-rtdb.europe-west1.firebasedatabase.app/lab/soap-log-7c4e19a83b2f46d0a95e17cb.json';
 var DEFPIN='2780';
-var SYNCB=['S1','S2','S3','G'];
+/* Line 3 has two products (6 soaps royal / 5 soaps lemon). Each one gets its
+   own cloud buckets, otherwise the lemon weights overwrite the royal ones. */
+function syncVar(){return L3k=='lemon'?'L':'R'}
+function syncOwn(){var v=syncVar();return ['S1','S2','S3','G','S1'+v,'S2'+v,'S3'+v,'G'+v]}
 function sRead(k,d){try{var v=localStorage.getItem(k);return v===null?d:v}catch(e){return d}}
 function sWrite(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 function syncLoad(){
@@ -311,15 +331,17 @@ function syncPersist(){
  sWrite('soaplog_sync_hash',JSON.stringify(SYNC.hash));
 }
 function syncBucket(id){
- var m=id.match(/s(\d)b\d/);if(m)return 'S'+m[1];
- m=id.match(/^(?:date|var|tests)(\d)/);if(m)return 'S'+m[1];
- m=id.match(/^[a-z]+(\d)l\d/);if(m)return 'S'+m[1];
- return 'G';
+ var v=/l3/.test(id)?syncVar():'';
+ var m=id.match(/s(\d)b\d/);if(m)return 'S'+m[1]+v;
+ m=id.match(/^(?:date|var|tests)(\d)/);if(m)return 'S'+m[1]+v;
+ m=id.match(/^[a-z]+(\d)l\d/);if(m)return 'S'+m[1]+v;
+ return 'G'+v;
 }
 function syncHash(s){var h=5381,i;for(i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return ''+(h>>>0);}
 function syncBuckets(){
  var s=snap(),b={},i;
- for(i=0;i<SYNCB.length;i++)b[SYNCB[i]]={v:{},t:{}};
+ var own=syncOwn();
+ for(i=0;i<own.length;i++)b[own[i]]={v:{},t:{}};
  Object.keys(s.v).forEach(function(k){b[syncBucket(k)].v[k]=s.v[k]});
  Object.keys(s.t).forEach(function(k){b[syncBucket(k)].t[k]=s.t[k]});
  return b;
@@ -348,8 +370,9 @@ async function syncRead(cfg){
   if(!SYNC.pin)throw new Error('PIN needed');
   var key=await syncKey(body.salt);
   var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:unb64(body.iv)},key,unb64(body.ct));
-  return JSON.parse(new TextDecoder().decode(pt));
+  body=JSON.parse(new TextDecoder().decode(pt));
  }
+ if(body.sv!==2)return null;   /* an old cloud layout - ignored, replaced on the next push */
  return body;
 }
 function syncStatus(msg){
@@ -366,19 +389,20 @@ async function syncPush(){
  var cfg=syncCfg();if(!cfg)return;
  var remote=await syncRead(cfg);            /* throws if we cannot decrypt -> never overwrite */
  var cur=syncBuckets(),ts=(remote&&remote.ts)||{},b=(remote&&remote.b)||{},now=Date.now(),i;
- for(i=0;i<SYNCB.length;i++){
-  var k=SYNCB[i],ser=JSON.stringify(cur[k]),h=syncHash(ser);
+ var own=syncOwn();
+ for(i=0;i<own.length;i++){
+  var k=own[i],ser=JSON.stringify(cur[k]),h=syncHash(ser);
   if(SYNC.hash[k]!==h){SYNC.ts[k]=now;SYNC.hash[k]=h;}
   var myTs=SYNC.ts[k]||0,rTs=ts[k]||0;
   if(myTs>=rTs){ts[k]=myTs;b[k]=cur[k];}
   else{SYNC.hash[k]=syncHash(JSON.stringify(b[k]));}
  }
- var plain={v:1,ts:ts,b:b},out=plain;
+ var plain={v:2,sv:2,ts:ts,b:b},out=plain;
  if(SYNC.pin&&syncCryptoOk()){
   if(!SYNC.salt){SYNC.salt=b64(crypto.getRandomValues(new Uint8Array(16)));syncPersist();}
   var key=await syncKey(SYNC.salt),iv=crypto.getRandomValues(new Uint8Array(12));
   var ct=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},key,new TextEncoder().encode(JSON.stringify(plain)));
-  out={v:1,enc:'aesgcm',salt:SYNC.salt,iv:b64(iv),ct:b64(new Uint8Array(ct))};
+  out={v:2,sv:2,enc:'aesgcm',salt:SYNC.salt,iv:b64(iv),ct:b64(new Uint8Array(ct))};
  }
  var r=await fetch(cfg.url,{method:'PUT',headers:Object.assign({},cfg.headers,{'Content-Type':'application/json'}),body:JSON.stringify(out)});
  if(!r.ok)throw new Error('HTTP '+r.status);
@@ -387,9 +411,9 @@ async function syncPush(){
 async function syncPull(){
  var cfg=syncCfg();if(!cfg)return;
  var rem=await syncRead(cfg);if(!rem||!rem.b)return;
- var i,k,changed=false;
- for(i=0;i<SYNCB.length;i++){
-  k=SYNCB[i];var r=rem.b[k];if(!r)continue;
+ var i,k,changed=false,own=syncOwn();
+ for(i=0;i<own.length;i++){
+  k=own[i];var r=rem.b[k];if(!r)continue;
   var rTs=(rem.ts&&rem.ts[k])||0,lTs=SYNC.ts[k]||0;
   if(rTs>lTs){
    SYNC.applying=true;
