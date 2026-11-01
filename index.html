@@ -124,7 +124,7 @@ const today=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString(
 const TD={1:'08:30',2:'17:30',3:'01:30'};
 $('#sg').innerHTML=LINES.map(L=>fld(L.id+'_r',L.title+': sheet row of Shift A (optional)','','number')).join('');
 const form=(L,s,b)=>{const p=pid(L,s,b),H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],n=L.n;
-return `<div class="pw"><table class="pt" style="--hc:${L.hc}"><tr><th>Product Name</th><th>Batch No.</th><th>M/C</th><th>FFA</th><th>FAL</th><th colspan="${n}">NET Weight ${L.gm} GM</th><th>Avrg</th></tr><tr class="sp"><td>Line ${L.id.slice(1)}</td><td></td><td>(14-16)</td><td></td><td>0.05 Max</td>${[...Array(n)].map((_,k)=>`<td class="wc">${k+1}</td>`).join('')}<td class="avs" data-l="${L.id}" data-s="${s}"></td></tr><tr><td>${ti(p+'_p',L.p)}</td><td>${(s==1&&b==1)?ti(p+'_bn',L.b):`<span class="bnm" data-l="${L.id}">${L.b}</span>`}</td><td>${ti(p+'_m',L.m.toFixed(2),1)}</td><td></td><td class="fal" data-l="${L.id}" data-s="${s}">${L.fa.toFixed(2)}</td>${[...Array(n)].map((_,k)=>`<td class="wc">${ti(p+'_c'+k,L.c[k].toFixed(2),1)}</td>`).join('')}<td class="mn" id="${p}_mean"></td></tr></table></div>`};
+return `<div class="pw"><table class="pt" style="--hc:${L.hc}"><tr><th>Product Name</th><th>Batch No.</th><th>M/C</th><th>FFA</th><th>FAL</th><th colspan="${n}">NET Weight ${L.gm} GM</th><th>Avrg</th></tr><tr class="sp"><td>Line ${L.id.slice(1)}</td><td></td><td>(14-16)</td><td></td><td>0.05 Max</td>${[...Array(n)].map((_,k)=>`<td class="wc">${k+1}</td>`).join('')}<td class="avs" data-l="${L.id}" data-s="${s}"></td></tr><tr><td>${ti(p+'_p',L.p)}</td><td>${ti(p+'_bn',L.b)}</td><td>${ti(p+'_m',L.m.toFixed(2),1)}</td><td></td><td class="fal" data-l="${L.id}" data-s="${s}">${L.fa.toFixed(2)}</td>${[...Array(n)].map((_,k)=>`<td class="wc">${ti(p+'_c'+k,L.c[k].toFixed(2),1)}</td>`).join('')}<td class="mn" id="${p}_mean"></td></tr></table></div>`};
 const SN={1:'A',2:'B',3:'C'},SZO=[15,25,35,45,55,65,75,85,95,100].map(v=>`<option value="${v}"${v==100?' selected':''}>${v}%${v==100?' (current)':''}</option>`).join('');
 $('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>Shift ${SN[s]} (${r})</h2><div class="grid">`+fld('date'+s,'Date',today,'date')+fld('var'+s,'Variation +/-',0.2,'number')+fld('tests'+s,'Test hours (Cl / Gly / TFM)',TD[s])+`</div>`+LINES.map(L=>`<p class="n"><b>${L.title.split(' - ')[0]}</b> settings</p><div class="grid">`+fld('chl'+s+L.id,'Cl base',L.cl[0],'number')+fld('chlv'+s+L.id,'Cl +/-',L.cl[1],'number')+fld('gly'+s+L.id,'Gly base',L.gl[0],'number')+fld('glyv'+s+L.id,'Gly +/-',L.gl[1],'number')+fld('tmp'+s+L.id,'Temp',L.t.toFixed(1),'number')+fld('fa'+s+L.id,'FA base',L.fa.toFixed(2),'number')+fld('fav'+s+L.id,'FA +/-',0.01,'number')+fld('amin'+s+L.id,'Avrg min',L.amin==null?'':L.amin,'number')+fld('amax'+s+L.id,'Avrg max',L.amax==null?'':L.amax,'number')+'</div>').join('')+`<div class="bar"><button data-gs="${s}">Regenerate this shift</button></div><h3>Sheet1 forms (Line 1, 2, 3 for hours 1-3, then again for 4-6 and 7-8)</h3>${[1,2,3].map(b=>`<div class="grp">${LINES.map(L=>form(L,s,b)).join('')}<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:14px">Image size <select class="isz" style="width:auto">${SZO}</select></label>${LINES.map(L=>`<button data-img="${L.id}s${s}b${b}">Copy ${L.title.split(' - ')[0]} as image</button><button class="s" data-imgp="${L.id}s${s}b${b}" title="Save ${L.title.split(' - ')[0]} as a PNG file">Save PNG</button>`).join('')}<button class="p" data-imgg="s${s}b${b}">Copy all 3 as image</button><button data-imgs="s${s}b${b}">Save all 3 as PNG</button><button data-sv>Save</button></div></div>`).join('')}<h3>Data</h3>${LINES.map(L=>`<div class="bar"><b>${L.title}</b><button class="p" data-copy="${L.id}" data-s="${s}">Copy ${L.title.split(' - ')[0]} rows</button><button data-xl="${L.id}" data-s="${s}">Export to Excel</button><button data-sv>Save</button></div><div class="wrap"><table>${head(L)}<tbody id="${L.id}_b${s}"></tbody></table></div>`).join('')}<p class="n">Copy one line at a time and paste it into the matching sheet at column B of the next empty rows.</p></section>`).join('');
 function tf(tr){const c=[...tr.cells],g=i=>parseFloat(c[i].textContent),t=c[9];if(isNaN(g(7))||isNaN(g(8))){t.textContent='';t.dataset.v='';return}const v=(100-[4,5,6,7,8].reduce((a,i)=>a+(g(i)||0),0)-2)/1.086;t.dataset.v=v.toFixed(3);t.textContent=v.toFixed(2)}
@@ -135,7 +135,15 @@ function reflag(){LINES.forEach(L=>SHIFTS.forEach(([s])=>{[1,2,3].forEach(b=>mea
 function syncFal(){document.querySelectorAll('td.fal').forEach(c=>c.textContent=num('fa'+c.dataset.s+c.dataset.l).toFixed(2));document.querySelectorAll('td.avs').forEach(c=>{const lo=$('#amin'+c.dataset.s+c.dataset.l).value,hi=$('#amax'+c.dataset.s+c.dataset.l).value;c.textContent=lo!==''&&hi!==''?lo+'-'+hi:''})}
 function sync(){syncFal();SHIFTS.forEach(([s])=>{const d=$('#date'+s).value.split('-').reverse().join('/');LINES.forEach(L=>$('#'+L.id+'_b'+s).querySelectorAll('.d').forEach(c=>c.textContent=d))});reflag()}
 function setPB(L,s,b){const p=pid(L,s,b),[a,z]=BL[b-1],rows=$('#'+L.id+'_b'+s).rows;for(let i=a;i<z;i++)if(rows[i]){rows[i].querySelector('.pn').textContent=$('#'+p+'_p').value;rows[i].querySelector('.b').textContent=$('#'+pid(L,1,1)+'_bn').value}}
-function syncBatch(L){const v=$('#'+pid(L,1,1)+'_bn').value;document.querySelectorAll('.bnm[data-l="'+L.id+'"]').forEach(x=>x.textContent=v);SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>{if($('#'+L.id+'_b'+s).rows.length)setPB(L,s,b)}))}
+function syncBatch(L,v){
+ if(typeof v!=='string')v=undefined;   /* forEach passes the index - ignore it */
+ const first=$('#'+pid(L,1,1)+'_bn');
+ if(v===undefined)v=first?first.value:L.b;
+ /* the first batch number is the master: every form of that line shows it */
+ document.querySelectorAll('input[id^="'+L.id+'s"][id$="_bn"]').forEach(x=>{if(x.value!==v)x.value=v});
+ document.querySelectorAll('.bnm[data-l="'+L.id+'"]').forEach(x=>x.textContent=v);
+ SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>{if($('#'+L.id+'_b'+s).rows.length)setPB(L,s,b)}));
+}
 function rowHtml(L,s,b,hr,T,v){const p=pid(L,s,b),e=x=>`<td contenteditable inputmode="decimal">${x}</td>`;
 return `<tr><td class="d"></td><td>${hr}</td><td class="pn"></td><td class="b"></td>`+e(rnd(num(p+'_m'),v,2).toFixed(2))+'<td contenteditable inputmode="decimal"></td>'+e(Math.max(0,rnd(num('fa'+s+L.id),num('fav'+s+L.id),2)).toFixed(2))+
 (T?e(rnd(num('chl'+s+L.id),num('chlv'+s+L.id),2).toFixed(2))+e(rnd(num('gly'+s+L.id),num('glyv'+s+L.id),2).toFixed(2)):'<td contenteditable inputmode="decimal"></td>'.repeat(2))+'<td class="t"></td>'+
@@ -153,7 +161,7 @@ if(b.id=='all')LINES.forEach(gen);
 else if(b.dataset.gen)gen(LINES.find(L=>L.id==b.dataset.gen));
 else if(b.dataset.copy)copy(tsv(LINES.find(L=>L.id==b.dataset.copy),b.dataset.s),b)});
 document.addEventListener('input',ev=>{const t=ev.target;
-if(t.tagName=='INPUT'){const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
+if(t.tagName=='INPUT'){const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
 const tr=t.closest('tr');if(tr&&t.closest('.wrap tbody'))avg(tr)});
 document.addEventListener('change',ev=>{const m=ev.target.id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|t)$/);if(m)genBlock(LINES.find(L=>L.id==m[1]),+m[2],+m[3])});
 const ed=tr=>[...tr.querySelectorAll('td[contenteditable],input')];
@@ -185,7 +193,7 @@ if(last)last.dispatchEvent(new Event('change',{bubbles:true}))});
 const KEY='soapLogV3',AK='soapLogAuto',stamp=t=>{document.querySelectorAll('#st,.stt').forEach(x=>x.textContent=t);return t};
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}},fetchS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
-function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(syncBatch);reflag()}
+function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));reflag()}
 const isL3=id=>/^l3|l3$/.test(id),rd=k=>{try{return JSON.parse(fetchS(k)||'null')}catch(e){return null}};
 const splitD=d=>{const c={v:{},t:{}},l={v:{},t:{}};['v','t'].forEach(w=>Object.entries((d&&d[w])||{}).forEach(([k,x])=>(isL3(k)?l:c)[w][k]=x));return [c,l]};
 function save(){const [c,l]=splitD(snap());stamp(store('soapLogV3',JSON.stringify(c))&&store('soapLogV3_'+L3k,JSON.stringify(l))?'Saved '+new Date().toLocaleTimeString():'Auto-save unavailable here: use Export backup')}
@@ -281,7 +289,7 @@ if(saved){
    Object.keys(saved.t||{}).forEach(k=>{if(/l3/.test(k))delete saved.t[k]});
    stamp('Line 3 data was reset - product mix fixed');
   }}
- apply(saved);LINES.forEach(L=>{if(!$('#'+L.id+'_b1').rows.length)gen(L)});if(!/reset/.test(stamp))stamp('Restored saved data')}else LINES.forEach(gen);
+ apply(saved);LINES.forEach(L=>syncBatch(L));LINES.forEach(L=>{if(!$('#'+L.id+'_b1').rows.length)gen(L)});if(!/reset/.test(stamp))stamp('Restored saved data')}else LINES.forEach(gen);
 </script><script>
 if('serviceWorker' in navigator && location.protocol!=='file:'){
  window.addEventListener('load',()=>{
