@@ -97,7 +97,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v3.0</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v3.1</span></nav>
 <main>
 <section id="set" class="pg"><h2>Settings, notes and backup</h2><div id="sg" class="grid"></div>
 <p class="n">Each shift page (A, B, C) starts with its day settings and nine Sheet1 forms (three per line: #1 sets hours 1-3, #2 hours 4-6, #3 hours 7-8), followed by the data tables for Line 1, 2 and 3. Edit any Sheet1 form, or paste a block copied from Excel, and only the hours of that form regenerate. Keyboard: arrow keys, Tab and Enter move between cells like Excel (typing overwrites, F2 edits inside a cell). Cl and Gly are filled only at the test hours; TFM = ((100 - SUM(M/C to Gly) - 2) / 1.086). Amber Avrg means outside 109.5-110.5. Fill the sheet row above to copy TFM and Avrg weight as live formulas (Shift B and C continue 8 rows after each other).</p><div class="bar"><button id="ex">Export backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json" hidden></label><button id="rs">Reset all data</button></div></section>
@@ -129,6 +129,8 @@ const dmY=s=>{const p=String(s||'').trim().split('-');return p.length===3?p[2]+'
 const todayDMY=()=>dmY(_iso());
 const yestDMY=()=>{const d=new Date(_iso()+'T00:00:00Z');d.setUTCDate(d.getUTCDate()-1);return dmY(d.toISOString().slice(0,10))};
 const dtf=v=>{v=String(v||'').trim();return v.indexOf('-')>0?v.split('-').reverse().join('/'):v};
+const DOVR={};
+const dateAuto=s=>DOVR[s]||(s===3?yestDMY():todayDMY());
 const TD={1:'08:30',2:'17:30',3:'01:30'};
 $('#sg').innerHTML=LINES.map(L=>fld(L.id+'_r',L.title+': sheet row of Shift A (optional)','','number')).join('');
 const form=(L,s,b)=>{const p=pid(L,s,b),H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],n=L.n;
@@ -169,7 +171,7 @@ if(b.id=='all')LINES.forEach(gen);
 else if(b.dataset.gen)gen(LINES.find(L=>L.id==b.dataset.gen));
 else if(b.dataset.copy)copy(tsv(LINES.find(L=>L.id==b.dataset.copy),b.dataset.s),b)});
 document.addEventListener('input',ev=>{const t=ev.target;
-if(t.tagName=='INPUT'){const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
+if(t.tagName=='INPUT'){const dm=t.id.match(/^date(\d)$/);if(dm){DOVR[dm[1]]=t.value;t.dataset.touched='1';sync();return}const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
 const tr=t.closest('tr');if(tr&&t.closest('.wrap tbody'))avg(tr)});
 document.addEventListener('change',ev=>{const m=ev.target.id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|t)$/);if(m)genBlock(LINES.find(L=>L.id==m[1]),+m[2],+m[3])});
 const ed=tr=>[...tr.querySelectorAll('td[contenteditable],input')];
@@ -203,7 +205,7 @@ function doneEdit(){const a=document.activeElement;if(a&&a.blur)a.blur()}
 const store=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}},fetchS=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
 function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
- ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e&&e.value)e.value=dmY(e.value)});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));reflag()}
+ ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=dateAuto(+k.slice(4))});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));sync();reflag()}
 const isL3=id=>/^l3|l3$/.test(id),rd=k=>{try{return JSON.parse(fetchS(k)||'null')}catch(e){return null}};
 const splitD=d=>{const c={v:{},t:{}},l={v:{},t:{}};['v','t'].forEach(w=>Object.entries((d&&d[w])||{}).forEach(([k,x])=>(isL3(k)?l:c)[w][k]=x));return [c,l]};
 function save(){const [c,l]=splitD(snap());stamp(store('soapLogV3',JSON.stringify(c))&&store('soapLogV3_'+L3k,JSON.stringify(l))?'Saved '+new Date().toLocaleTimeString():'Auto-save unavailable here: use Export backup')}
@@ -558,7 +560,11 @@ function syncPanel(){
   setInterval(function(){if(!document.hidden)syncPull().catch(syncErr)},45000);
   document.addEventListener('visibilitychange',function(){if(!document.hidden)syncPull().catch(syncErr)});
  }
- /* install prompt */
+ /* the date follows the clock: at midnight it becomes the new today (and shift C the new yesterday) */
+var _lastDay=_iso();
+function dateTick(){var d=_iso();if(d!==_lastDay){_lastDay=d;['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e&&!e.dataset.touched)e.value=dateAuto(+k.slice(4))});sync();}}
+setInterval(dateTick,30000);window.dateTick=dateTick;
+/* install prompt */
  var ib=document.getElementById('install'),deferred=null;
  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;if(ib)ib.hidden=false});
