@@ -243,27 +243,33 @@ function copyImg(items,btn,dlOnly){
  }catch(e){}
  blobP.then(b=>{if(wrote)return;if(!b){flash(btn,'Image too large');return;}save(b);});
 }
-function xlsTbl(L,s,row0){
+function xlsTbl(L,s,row0,nMax,withHead){
  const rows=[...$('#'+L.id+'_b'+s).rows],n=L.n,lw=String.fromCharCode(76+n),e=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;'),B='border:1px solid #000;text-align:center;font:10pt Calibri;',bl='background:#9CC3EE;font-weight:bold;',
  c=(v,st,x)=>`<td style="${B}${st||''}"${x||''}>${v}</td>`,rs=(t,w)=>c(t,bl+(w?'width:'+w+'px;':''),' rowspan="2"');
- let h='<tr><td></td>'+rs('Date',80)+rs('Time',50)+rs('Product Name',190)+rs('Batch No.',95)+['Moisture %','FFA %','FA %','Chloride %','Glycerin %','TFM %','Temp'].map(t=>c(t,bl)).join('')+c('NET Weight  '+L.gm+' GM',bl,` colspan="${n}"`)+rs('Avrg weight')+'</tr><tr><td></td>'+SPEC.map(t=>c(t,bl)).join('')+[...Array(n)].map((_,i)=>c(i+1,bl)).join('')+'</tr>';
- const F=['dd\\/mm\\/yyyy','h\\:mm','@','0','0\\.00','0\\.00','0\\.00','0\\.00','0\\.00','0\\.00','0\\.0'];
+ /* the number formats must NOT be escaped: Excel reads 0\.00 as a literal dot and
+    shifts the digits (45.4 -> 4.5, 110.63 -> 1.11) - the plain codes are correct */
+ const F=['dd/mm/yyyy','h:mm','@','0','0.00','0.00','0.00','0.00','0.00','0.00','0.0'];
+ let h='';
+ if(withHead)h+='<tr><td></td>'+rs('Date',80)+rs('Time',50)+rs('Product Name',190)+rs('Batch No.',95)+['Moisture %','FFA %','FA %','Chloride %','Glycerin %','TFM %','Temp'].map(t=>c(t,bl)).join('')+c('NET Weight  '+L.gm+' GM',bl,` colspan="${nMax}"`)+rs('Avrg weight')+'</tr><tr><td></td>'+SPEC.map(t=>c(t,bl)).join('')+[...Array(nMax)].map((_,i)=>c(i<n?i+1:'',bl)).join('')+'</tr>';
  rows.forEach((tr,i)=>{const r=row0+i,t=[...tr.cells].map(x=>x.textContent.trim());h+='<tr><td></td>';
- t.forEach((v,j)=>{const nf=j<11?F[j]:'0\\.00',st=`mso-number-format:'${nf}';`;
- if(j==9&&v!=='')h+=c(v,st,` x:fmla="=((100-SUM(F${r}:J${r})-2)/1.086)"`);else if(j==t.length-1)h+=c(v,st,` x:fmla="=AVERAGE(M${r}:${lw}${r})"`);else h+=c(e(v),st)});h+='</tr>'});
+ t.forEach((v,j)=>{const nf=j<11?F[j]:'0.00',st=`mso-number-format:'${nf}';`;
+ const av=j===t.length-1;
+ if(av)for(let q2=n;q2<nMax;q2++)h+=c('',st);
+ if(j==9&&v!=='')h+=c(v,st,` x:fmla="=((100-SUM(F${r}:J${r})-2)/1.086)"`);else if(av)h+=c(v,st,` x:fmla="=AVERAGE(M${r}:${lw}${r})"`);else h+=c(e(v),st)});h+='</tr>'});
  return h;
 }
 function xlsDl(bytes,name){var b=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});var u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(u)},4000)}
-function xls(L,s){const h=xlsTbl(L,s,3);var t=L.title.split(' - ')[0].replace(' ','');xlsDl(htmlTableToXlsx(h,t+'_Shift'+SN[s]),t+'_Shift'+SN[s]+'_'+$('#date'+s).value+'.xlsx')}
-/* the 3 lines together in one sheet, with a gap between them */
+function xls(L,s){const t=L.title.split(' - ')[0].replace(' ','');xlsDl(htmlTableToXlsx(xlsTbl(L,s,3,L.n,true),t+'_Shift'+SN[s]),t+'_Shift'+SN[s]+'_'+$('#date'+s).value+'.xlsx')}
+/* the 3 lines together in one sheet: the header once at the top, a gap between
+   the lines and every block aligned on the same columns */
 function xlsAll(s){
+ const nMax=Math.max.apply(null,LINES.map(L=>L.n));
  let h='',row=1;
- LINES.forEach(L=>{
+ LINES.forEach((L,idx)=>{
   const cnt=$('#'+L.id+'_b'+s).rows.length;
-  h+=xlsTbl(L,s,row+2);
-  row+=2+cnt;
-  h+='<tr><td style="height:12px"></td></tr>';
-  row+=1;
+  h+=xlsTbl(L,s,row+(idx?0:2),nMax,idx===0);
+  row+=cnt+(idx?0:2);
+  if(idx<LINES.length-1){h+='<tr><td style="height:12px"></td></tr>';row+=1;}
  });
  xlsDl(htmlTableToXlsx(h,'All 3 Lines - Shift '+SN[s]),'All3Lines_Shift'+SN[s]+'_'+$('#date'+s).value+'.xlsx');
 }
