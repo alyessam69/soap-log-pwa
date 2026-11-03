@@ -1,7 +1,7 @@
 // Soap Bar Daily Log - service worker
 // Network first for the app shell (a new index.html is picked up as soon as you
 // are online, bypassing the CDN cache), the cache is the offline fallback.
-const CACHE = 'soaplog-v8';
+const CACHE = 'soaplog-v9';
 const SHELL = [
   './',
   './index.html',
