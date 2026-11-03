@@ -117,7 +117,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><a href="#" data-pg="entry">تسجيل</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.2</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><a href="#" data-pg="entry">تسجيل</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.3</span></nav>
 <main>
 <section id="set" class="pg"><h2>Settings, notes and backup</h2><div id="sg" class="grid"></div>
 <p class="n">Each shift page (A, B, C) starts with its day settings and nine Sheet1 forms (three per line: #1 sets hours 1-3, #2 hours 4-6, #3 hours 7-8), followed by the data tables for Line 1, 2 and 3. Edit any Sheet1 form, or paste a block copied from Excel, and only the hours of that form regenerate. Keyboard: arrow keys, Tab and Enter move between cells like Excel (typing overwrites, F2 edits inside a cell). Cl and Gly are filled only at the test hours; TFM = ((100 - SUM(M/C to Gly) - 2) / 1.086). Amber Avrg means outside 109.5-110.5. Fill the sheet row above to copy TFM and Avrg weight as live formulas (Shift B and C continue 8 rows after each other).</p><div class="bar"><button id="ex">Export backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json" hidden></label><button id="rs">Reset all data</button></div></section>
@@ -263,7 +263,7 @@ function pToast(txt,ok){
 /* a short beep so you know the pull worked */
 var AC=null;
 function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
-function beep(ok){try{const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;
+function beep(ok){try{const c=entAc();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;
  o.connect(g);g.connect(c.destination);
  if(ok){o.type='sine';o.frequency.setValueAtTime(760,t);o.frequency.setValueAtTime(1320,t+0.16);
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);o.start(t);o.stop(t+0.42);}
@@ -328,7 +328,8 @@ function entPage(){
  +'</div></div><div id="entLines"></div>'
  +'<div class="card"><div class="entwarn" id="entWarn"></div>'
  +'<button id="entSave" class="p" style="width:100%;padding:14px;font-size:16px;font-weight:700;border-radius:10px;background:var(--acc);color:#fff">حفظ في الشِفت</button>'
- +'<div class="entmsg" id="entMsg"></div></div>';
+ +'<div class="entmsg" id="entMsg"></div>'
+ +'<label style="display:flex;flex-direction:row;align-items:center;gap:7px;margin-top:10px"><input type="checkbox" id="entSnd" style="width:auto"'+(localStorage.getItem('soapSound')==='0'?'':' checked')+'> صوت بعد الحفظ</label></div>';
 }
 function entBuild(){
  if($('#entBody')&&!$('#entBody').children.length)$('#entBody').innerHTML=entPage();
@@ -356,6 +357,7 @@ function entBuild(){
   b.oninput=entCalc;});
  $$('.entmoi,.entfaq,.entffa,.entbn').forEach(i=>i.oninput=entCalc);
  const sv=$('#entSave');if(sv)sv.onclick=entSave;
+ const sd=$('#entSnd');if(sd)sd.onchange=()=>{store('soapSound',sd.checked?'1':'0');if(sd.checked)entBeep(true);};
  const sh=$('#entsh'),bt=$('#entbt');
  if(sh)sh.onchange=()=>{entBuild();entLoad();};
  if(bt)bt.onchange=()=>{entLoad();};
@@ -389,11 +391,22 @@ function entCalc(){
  else{w.className='entwarn';w.textContent='';}
  return miss;
 }
+var ENTAC=null;const entAc=()=>{try{if(!ENTAC)ENTAC=new (window.AudioContext||window.webkitAudioContext)();if(ENTAC.state=='suspended')ENTAC.resume();return ENTAC}catch(e){return null}};
+function entBeep(ok){
+ try{if(localStorage.getItem('soapSound')==='0')return;const c=entAc();if(!c)return;
+  const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.connect(g);g.connect(c.destination);
+  if(ok){o.type='sine';o.frequency.setValueAtTime(760,t);o.frequency.setValueAtTime(1040,t+0.10);o.frequency.setValueAtTime(1320,t+0.20);
+   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.22,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.42);o.start(t);o.stop(t+0.44);}
+  else{o.type='square';o.frequency.setValueAtTime(300,t);o.frequency.setValueAtTime(190,t+0.16);
+   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.18,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.30);o.start(t);o.stop(t+0.32);}
+ }catch(e){}
+ try{if(navigator.vibrate)navigator.vibrate(ok?[40,60,40]:[180,90,180]);}catch(e){}
+}
 function entSave(){
  const s=$('#entsh').value,bt=$('#entbt').value;
  const miss=entCalc(),msg=$('#entMsg');
  const show=(bg,bd,co,tx)=>{msg.style.display='block';msg.style.background=bg;msg.style.border='1px solid '+bd;msg.style.color=co;msg.textContent=tx;};
- if(miss.length){show('#fff6e6','#e0b978','#8a5a10','ناقص: '+miss.join(' — ')+' — مش هتحفظ');return;}
+ if(miss.length){show('#fff6e6','#e0b978','#8a5a10','ناقص: '+miss.join(' — ')+' — مش هتحفظ');entBeep(false);return;}
  let n=0;
  [1,2,3].forEach(ln=>{
   $$('.entw1[data-ln="'+ln+'"]').forEach((b,i)=>{
@@ -405,7 +418,7 @@ function entSave(){
   if(ln!==2)set('entbn','l'+ln+'s'+s+'b'+bt+'_bn');
  });
  refreshQC();refreshW();save();
- show('#e4f5ec','#7fbf9d','#0b5c38','تم تسجيل '+n+' قيمة في الشِفت '+SN[s]+' (دفعة '+bt+') — اتحفظت واتعمل sync');
+ show('#e4f5ec','#7fbf9d','#0b5c38','تم تسجيل '+n+' قيمة في الشِفت '+SN[s]+' (دفعة '+bt+') — اتحفظت واتعمل sync');entBeep(true);
 }
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
 function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
@@ -429,9 +442,11 @@ if(b.id=='sv')save();
 else if(b.id=='ex'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snap())],{type:'application/json'}));a.download='soap_log_backup_'+today+'.json';a.click()}
 else if(b.id=='rs'&&confirm('Delete all saved data and reset the page?')){skip=true;try{['soapLogV3','soapLogV3_royal','soapLogV3_lemon','soapLogV2','soapLogV2_royal','soapLogV1'].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}});
 $('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));save();stamp('Backup imported')}catch(_){stamp('Invalid backup file')}};r.readAsText(f)});
-function showPg(id){if(id=='entry'&&typeof entLoad=='function')entLoad();document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
+function showPg(id){if(id=='entry'&&typeof entLoad=='function')entLoad();try{history.replaceState(null,'','#'+id)}catch(e){}document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
 document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k)))}});
-const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);showPg(pe&&pe.classList.contains('pg')?pg0:'sh1');
+const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);
+const hs=(location.hash||'').slice(1);
+showPg(document.getElementById(hs)?hs:(pe&&pe.classList.contains('pg')?pg0:'sh1'));
 const avsTxt=(L,s)=>{const lo=$('#amin'+s+L.id).value,hi=$('#amax'+s+L.id).value;return lo!==''&&hi!==''?lo+'-'+hi:''};
 const SPEC=['14-16','1.5 Max','0.05 Max','0.8 Max','5-7','MIN 69','42-44'];
 const flash=(b,t)=>{const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,1400)};
