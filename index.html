@@ -85,6 +85,24 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 .sl textarea,.sl input{width:100%;margin-top:4px;font:inherit;font-size:13px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
 .srow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
 .scp{background:var(--acc);color:var(--on);border:0;border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.entcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.enthead{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:9px}
+.enthead b{font-size:15px}
+.enthead .t{font-size:12.5px;color:var(--mut);flex:1 1 auto}
+.enthead .n{font-size:11.5px;font-weight:700;color:var(--acc);background:#e4f5ec;border-radius:20px;padding:2px 9px}
+.entqc{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.entqc input{padding:9px 2px;font-size:15px;text-align:center}
+.entw{display:flex;flex-direction:column;gap:5px;margin-top:3px}
+.entw>div{display:flex;align-items:center;gap:8px}
+.entw span{flex:0 0 32px;text-align:center;font-size:12.5px;font-weight:700;color:var(--mut);background:#eef3f0;border-radius:7px;padding:8px 0}
+.entw input{padding:9px 8px;font-size:16px;text-align:center}
+.entw input.bad{border-color:#c0392b;background:#fdeaea}
+.entavg{display:flex;align-items:center;gap:8px;margin-top:9px}
+.entavg label{margin:0;flex:0 0 auto;font-size:12.5px}
+.entavg input{text-align:center;font-weight:700;background:#eef3f0}
+.entwarn{margin-top:9px;padding:9px 11px;border-radius:9px;font-size:13px;display:none;background:#fff6e6;border:1px solid #e0b978;color:#8a5a10;font-weight:600}
+.entwarn.on{display:block}
+.entmsg{margin-top:9px;padding:9px 11px;border-radius:9px;font-size:13px;display:none}
 </style><link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
@@ -99,15 +117,16 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.1</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><a href="#" data-pg="entry">تسجيل</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.2</span></nav>
 <main>
 <section id="set" class="pg"><h2>Settings, notes and backup</h2><div id="sg" class="grid"></div>
 <p class="n">Each shift page (A, B, C) starts with its day settings and nine Sheet1 forms (three per line: #1 sets hours 1-3, #2 hours 4-6, #3 hours 7-8), followed by the data tables for Line 1, 2 and 3. Edit any Sheet1 form, or paste a block copied from Excel, and only the hours of that form regenerate. Keyboard: arrow keys, Tab and Enter move between cells like Excel (typing overwrites, F2 edits inside a cell). Cl and Gly are filled only at the test hours; TFM = ((100 - SUM(M/C to Gly) - 2) / 1.086). Amber Avrg means outside 109.5-110.5. Fill the sheet row above to copy TFM and Avrg weight as live formulas (Shift B and C continue 8 rows after each other).</p><div class="bar"><button id="ex">Export backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json" hidden></label><button id="rs">Reset all data</button></div></section>
+<section id="entry" class="pg"><div id="entBody"></div></section>
 <div id="lines"></div>
 </main>
 <div id="fab"><button data-nav="0,-1">&#9664;</button><button data-nav="0,1">&#9654;</button><button data-nav="-1,0">&#9650;</button><button data-nav="1,0">&#9660;</button><label><input type="checkbox" id="autoc"> Auto-save</label><button class="p" data-sv>Save</button><span class="stt"></span></div>
 <script>
-const $=s=>document.querySelector(s);
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 let L3k='lemon';try{L3k=localStorage.getItem('soapL3')||'royal'}catch(e){}
 const P3={lemon:{title:'Line 3 - Savannah Lemon Blossom&amp;Orange',sheet:'Line 3',p:'Savannah Lemon Blossom&amp;Orange',b:'3100260901',n:5,c:[151.9,151.2,151.1,151.0,151.1],m:16.5,t:45,fa:.05,gm:150,amin:149.5,amax:150.5,cl:[.75,.05],gl:[7.5,.1]},
 royal:{title:'Line 3 - Royal (90-10)',sheet:'Line 3 Royal (90-10)',p:'Royal Lather',b:'3100241612',n:6,c:[108.36,109.51,109.81,109.71,110.51,111.01],m:16.9,t:44.8,fa:.05,gm:110,amin:109.5,amax:110.5,cl:[.55,.1],gl:[7.55,.1]}};
@@ -295,6 +314,99 @@ function refreshQC(){
   }
  }));
 }
+/* ---------------- صفحة التسجيل (داخل التطبيق) ---------------- */
+function entInfo(ln){if(ln===3)return P3[L3k];return LINES.find(L=>L.id=='l'+ln);}
+function entName(ln){const L=entInfo(ln);return L.title.split(' - ').slice(1).join(' - ')||L.title;}
+function entCount(ln){return entInfo(ln).n;}
+function entPage(){
+ return '<div class="card"><b>تسجيل الأوزان والتحاليل</b>'
+ +'<p class="n">اكتب هنا والبيانات بتروح في مكانها في نفس الشِفت على طول — حفظ واحد بس.</p>'
+ +'<div style="display:flex;gap:8px">'
+ +'<div style="flex:1"><label>الشِفت</label><select id="entsh"><option value="1">A — 08:30</option><option value="2">B — 16:30</option><option value="3">C — 00:30</option></select></div>'
+ +'<div style="flex:1"><label>الدفعة</label><select id="entbt"><option value="1">1 (ساعات 1-3)</option><option value="2">2 (ساعات 4-6)</option><option value="3">3 (ساعات 7-8)</option></select></div>'
+ +'<div style="flex:1"><label>منتج الخط 3</label><select id="entvr" disabled></select></div>'
+ +'</div></div><div id="entLines"></div>'
+ +'<div class="card"><div class="entwarn" id="entWarn"></div>'
+ +'<button id="entSave" class="p" style="width:100%;padding:14px;font-size:16px;font-weight:700;border-radius:10px;background:var(--acc);color:#fff">حفظ في الشِفت</button>'
+ +'<div class="entmsg" id="entMsg"></div></div>';
+}
+function entBuild(){
+ if($('#entBody')&&!$('#entBody').children.length)$('#entBody').innerHTML=entPage();
+ $('#entvr').value=L3k=='lemon'?'Lemon':'Royal';
+ if(!$('#entsh').dataset.set){
+  const on=document.querySelector('nav a.on[data-pg^="sh"]');
+  $('#entsh').value=on?on.dataset.pg.slice(2):'1';
+  $('#entsh').dataset.set='1';}
+ $('#entLines').innerHTML=[1,2,3].map(ln=>{
+  const n=entCount(ln),ro=ln===2,nm=entName(ln);
+  return '<div class="entcard" data-ln="'+ln+'"><div class="enthead"><b>الخط '+ln+'</b><span class="t">'+nm+'</span><span class="n">'+n+' قالب</span></div>'
+  +'<label>Batch No.'+(ro?' (من الشيت الأصلي — مش بيتغير من هنا)':'')+'</label>'
+  +'<input class="entbn" data-ln="'+ln+'" type="text" inputmode="numeric" placeholder="مثال: 3100241611"'+(ro?' readonly':'')+'>'
+  +'<label>التحاليل</label><div class="entqc">'
+  +'<input class="entmoi" data-ln="'+ln+'" type="text" inputmode="decimal" placeholder="Moisture">'
+  +'<input class="entfaq" data-ln="'+ln+'" type="text" inputmode="decimal" placeholder="FA">'
+  +'<input class="entffa" data-ln="'+ln+'" type="text" inputmode="decimal" placeholder="FFA">'
+  +'</div><label>الأوزان</label><div class="entw">'
+  +[...Array(n)].map((_,i)=>'<div><span>'+(i+1)+'</span><input class="entw1" data-ln="'+ln+'" data-i="'+i+'" type="text" inputmode="decimal" placeholder="—"></div>').join('')
+  +'</div><div class="entavg"><label>المتوسط (Avgr)</label><input class="entavg1" data-ln="'+ln+'" readonly></div>'
+  +'<div class="entwarn wl" data-ln="'+ln+'"></div></div>';
+ }).join('');
+ $$('.entw1').forEach(b=>{
+  b.onblur=()=>{const v=b.value.trim();if(v&&/^-?\d+(\.\d+)?$/.test(v)){const f=fixW(v);if(f!==v){b.value=f;entCalc();}}};
+  b.oninput=entCalc;});
+ $$('.entmoi,.entfaq,.entffa,.entbn').forEach(i=>i.oninput=entCalc);
+ const sv=$('#entSave');if(sv)sv.onclick=entSave;
+ const sh=$('#entsh'),bt=$('#entbt');
+ if(sh)sh.onchange=()=>{entBuild();entLoad();};
+ if(bt)bt.onchange=()=>{entLoad();};
+ entCalc();
+}
+function entLoad(){
+ if(!$('#entLines')||!$('#entLines').children.length)entBuild();
+ const s=$('#entsh').value,bt=$('#entbt').value;
+ [1,2,3].forEach(ln=>{
+  $$('.entw1[data-ln="'+ln+'"]').forEach((b,i)=>{const inp=document.getElementById('l'+ln+'s'+s+'b'+bt+'_c'+i);b.value=inp&&inp.value?inp.value:'';});
+  const g=(cls,id)=>{const o=$$('.'+cls+'[data-ln="'+ln+'"]')[0];const e=document.getElementById(id);if(o)o.value=e&&e.value!==''?e.value:'';};
+  g('entmoi','moi'+s+'l'+ln);g('entfaq','faq'+s+'l'+ln);g('entffa','ffa'+s+'l'+ln);g('entbn','l'+ln+'s'+s+'b'+bt+'_bn');
+ });
+ entCalc();
+}
+function entCalc(){
+ const miss=[];
+ [1,2,3].forEach(ln=>{
+  const ws=$$('.entw1[data-ln="'+ln+'"]').map(b=>b.value.trim());
+  const nums=ws.filter(x=>x!=='').map(parseFloat).filter(x=>!isNaN(x));
+  const av=$$('.entavg1[data-ln="'+ln+'"]')[0];
+  if(av)av.value=nums.length?(nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(2):'';
+  const m=[];ws.forEach((x,i)=>{if(x==='')m.push(i+1)});
+  $$('.entw1[data-ln="'+ln+'"]').forEach((b,i)=>b.classList.toggle('bad',ws[i]===''));
+  const w=$$('.wl[data-ln="'+ln+'"]')[0];
+  if(w){if(m.length){w.className='entwarn on wl';w.textContent='ناقص وزن لـ '+m.length+' قالب (رقم '+m.join('، ')+')';}else{w.className='entwarn wl';w.textContent='';}}
+  if(m.length)miss.push('الخط '+ln+' ناقصه '+m.length+' وزن');
+ });
+ const w=$('#entWarn');
+ if(miss.length){w.className='entwarn on';w.textContent='ناقص: '+miss.join(' — ')+' — لازم تكتبهم كلهم قبل الحفظ';}
+ else{w.className='entwarn';w.textContent='';}
+ return miss;
+}
+function entSave(){
+ const s=$('#entsh').value,bt=$('#entbt').value;
+ const miss=entCalc(),msg=$('#entMsg');
+ const show=(bg,bd,co,tx)=>{msg.style.display='block';msg.style.background=bg;msg.style.border='1px solid '+bd;msg.style.color=co;msg.textContent=tx;};
+ if(miss.length){show('#fff6e6','#e0b978','#8a5a10','ناقص: '+miss.join(' — ')+' — مش هتحفظ');return;}
+ let n=0;
+ [1,2,3].forEach(ln=>{
+  $$('.entw1[data-ln="'+ln+'"]').forEach((b,i)=>{
+   let v=b.value.trim();if(!v)return;if(/^-?\d+(\.\d+)?$/.test(v))v=fixW(v);
+   const inp=document.getElementById('l'+ln+'s'+s+'b'+bt+'_c'+i);
+   if(inp){inp.value=v;n++;}});
+  const set=(cls,id)=>{const o=$$('.'+cls+'[data-ln="'+ln+'"]')[0];if(!o)return;const v=o.value.trim();if(v==='')return;const inp=document.getElementById(id);if(inp){inp.value=v;n++;}};
+  set('entmoi','moi'+s+'l'+ln);set('entfaq','faq'+s+'l'+ln);set('entffa','ffa'+s+'l'+ln);
+  if(ln!==2)set('entbn','l'+ln+'s'+s+'b'+bt+'_bn');
+ });
+ refreshQC();refreshW();save();
+ show('#e4f5ec','#7fbf9d','#0b5c38','تم تسجيل '+n+' قيمة في الشِفت '+SN[s]+' (دفعة '+bt+') — اتحفظت واتعمل sync');
+}
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
 function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
  ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=dateAuto(+k.slice(4))});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));sync();refreshQC();refreshW();reflag()}
@@ -317,7 +429,7 @@ if(b.id=='sv')save();
 else if(b.id=='ex'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snap())],{type:'application/json'}));a.download='soap_log_backup_'+today+'.json';a.click()}
 else if(b.id=='rs'&&confirm('Delete all saved data and reset the page?')){skip=true;try{['soapLogV3','soapLogV3_royal','soapLogV3_lemon','soapLogV2','soapLogV2_royal','soapLogV1'].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}});
 $('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));save();stamp('Backup imported')}catch(_){stamp('Invalid backup file')}};r.readAsText(f)});
-function showPg(id){document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
+function showPg(id){if(id=='entry'&&typeof entLoad=='function')entLoad();document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
 document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k)))}});
 const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);showPg(pe&&pe.classList.contains('pg')?pg0:'sh1');
 const avsTxt=(L,s)=>{const lo=$('#amin'+s+L.id).value,hi=$('#amax'+s+L.id).value;return lo!==''&&hi!==''?lo+'-'+hi:''};
@@ -453,6 +565,7 @@ if(saved){
    stamp('Line 3 data was reset - product mix fixed');
   }}
  apply(saved);LINES.forEach(L=>syncBatch(L));LINES.forEach(L=>{if(!$('#'+L.id+'_b1').rows.length)gen(L)});if(!/reset/.test(stamp))stamp('Restored saved data')}else LINES.forEach(gen);
+entBuild();entLoad();
 </script><script>
 if('serviceWorker' in navigator && location.protocol!=='file:'){
  window.addEventListener('load',()=>{
