@@ -12,7 +12,7 @@ nav a{color:var(--ink);text-decoration:none;padding:5px 10px;border-radius:6px}
 nav a:hover{background:var(--head)}
 main{max-width:1500px;margin:0 auto;padding:14px}
 .grp{border:2px solid var(--ink);padding:6px;margin:0 0 24px}
-.grp .pw{margin:0;zoom:var(--z,1);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.grp .pw{margin:0;zoom:var(--z,1)}
 th,td{padding:8px 10px;font-size:14px}
 td[contenteditable]{min-width:66px}
 .pt{width:max-content;min-width:100%;font-size:14px}
@@ -85,10 +85,6 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 .sl textarea,.sl input{width:100%;margin-top:4px;font:inherit;font-size:13px;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink)}
 .srow{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
 .scp{background:var(--acc);color:var(--on);border:0;border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer}
-.entq td{padding:4px 3px}
-.entq th{padding:4px 3px;font-size:12.5px}
-.entq input{min-width:0;width:100%;padding:9px 3px;font-size:15px;text-align:center}
-.entq td:first-child input{min-width:90px}
 </style><link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
@@ -103,7 +99,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><a href="#" data-pg="entry">تسجيل</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.4</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.1</span></nav>
 <main>
 <section id="set" class="pg"><h2>Settings, notes and backup</h2><div id="sg" class="grid"></div>
 <p class="n">Each shift page (A, B, C) starts with its day settings and nine Sheet1 forms (three per line: #1 sets hours 1-3, #2 hours 4-6, #3 hours 7-8), followed by the data tables for Line 1, 2 and 3. Edit any Sheet1 form, or paste a block copied from Excel, and only the hours of that form regenerate. Keyboard: arrow keys, Tab and Enter move between cells like Excel (typing overwrites, F2 edits inside a cell). Cl and Gly are filled only at the test hours; TFM = ((100 - SUM(M/C to Gly) - 2) / 1.086). Amber Avrg means outside 109.5-110.5. Fill the sheet row above to copy TFM and Avrg weight as live formulas (Shift B and C continue 8 rows after each other).</p><div class="bar"><button id="ex">Export backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json" hidden></label><button id="rs">Reset all data</button></div></section>
@@ -111,7 +107,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 </main>
 <div id="fab"><button data-nav="0,-1">&#9664;</button><button data-nav="0,1">&#9654;</button><button data-nav="-1,0">&#9650;</button><button data-nav="1,0">&#9660;</button><label><input type="checkbox" id="autoc"> Auto-save</label><button class="p" data-sv>Save</button><span class="stt"></span></div>
 <script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const $=s=>document.querySelector(s);
 let L3k='lemon';try{L3k=localStorage.getItem('soapL3')||'royal'}catch(e){}
 const P3={lemon:{title:'Line 3 - Savannah Lemon Blossom&amp;Orange',sheet:'Line 3',p:'Savannah Lemon Blossom&amp;Orange',b:'3100260901',n:5,c:[151.9,151.2,151.1,151.0,151.1],m:16.5,t:45,fa:.05,gm:150,amin:149.5,amax:150.5,cl:[.75,.05],gl:[7.5,.1]},
 royal:{title:'Line 3 - Royal (90-10)',sheet:'Line 3 Royal (90-10)',p:'Royal Lather',b:'3100241612',n:6,c:[108.36,109.51,109.81,109.71,110.51,111.01],m:16.9,t:44.8,fa:.05,gm:110,amin:109.5,amax:110.5,cl:[.55,.1],gl:[7.55,.1]}};
@@ -144,7 +140,7 @@ $('#sg').innerHTML=LINES.map(L=>fld(L.id+'_r',L.title+': sheet row of Shift A (o
 const form=(L,s,b)=>{const p=pid(L,s,b),H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],n=L.n;
 return `<div class="pw"><table class="pt" style="--hc:${L.hc}"><tr><th>Product Name</th><th>Batch No.</th><th>M/C</th><th>FFA</th><th>FAL</th><th colspan="${n}">NET Weight ${L.gm} GM</th><th>Avrg</th></tr><tr class="sp"><td>Line ${L.id.slice(1)}</td><td></td><td>(14-16)</td><td></td><td>0.05 Max</td>${[...Array(n)].map((_,k)=>`<td class="wc">${k+1}</td>`).join('')}<td class="avs" data-l="${L.id}" data-s="${s}"></td></tr><tr><td>${ti(p+'_p',L.p)}</td><td>${ti(p+'_bn',L.b)}</td><td>${ti(p+'_m',L.m.toFixed(2),1)}</td><td class="ffacell" data-l="${L.id}" data-s="${s}">${rv('ffa'+s+L.id)}</td><td class="fal" data-l="${L.id}" data-s="${s}">${L.fa.toFixed(2)}</td>${[...Array(n)].map((_,k)=>`<td class="wc">${ti(p+'_c'+k,L.c[k].toFixed(2),1)}</td>`).join('')}<td class="mn" id="${p}_mean"></td></tr></table>`+(b===1?'<div class="qcstrip" data-l="'+L.id+'" data-s="'+s+'">Moisture <b class="qm"></b> &nbsp;·&nbsp; FA <b class="qf"></b> &nbsp;·&nbsp; FFA <b class="qff"></b></div>':'')+`</div>`};
 const SN={1:'A',2:'B',3:'C'},SZO=[15,25,35,45,55,65,75,85,95,100].map(v=>`<option value="${v}"${v==100?' selected':''}>${v}%${v==100?' (current)':''}</option>`).join('');
-$('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>Shift ${SN[s]} (${r})</h2><div id="entSec${s}"></div><div class="grid">`+fld('date'+s,'Date',s===3?yestDMY():todayDMY(),'text','DD/MM/YYYY')+fld('var'+s,'Variation +/-',0.2,'number')+fld('tests'+s,'Test hours (Cl / Gly / TFM)',TD[s])+`</div>`+LINES.map(L=>`<p class="n"><b>${L.title.split(' - ')[0]}</b> settings</p><div class="grid">`+fld('chl'+s+L.id,'Cl base',L.cl[0],'number')+fld('chlv'+s+L.id,'Cl +/-',L.cl[1],'number')+fld('gly'+s+L.id,'Gly base',L.gl[0],'number')+fld('glyv'+s+L.id,'Gly +/-',L.gl[1],'number')+fld('tmp'+s+L.id,'Temp',L.t.toFixed(1),'number')+fld('fa'+s+L.id,'FA base',L.fa.toFixed(2),'number')+fld('fav'+s+L.id,'FA +/-',0.01,'number')+fld('moi'+s+L.id,'Moisture','','number')+fld('faq'+s+L.id,'FA measured','','number')+fld('ffa'+s+L.id,'FFA measured','','number')+fld('amin'+s+L.id,'Avrg min',L.amin==null?'':L.amin,'number')+fld('amax'+s+L.id,'Avrg max',L.amax==null?'':L.amax,'number')+'</div>').join('')+`<div class="bar"><button data-gs="${s}">Regenerate this shift</button></div><h3>Sheet1 forms (Line 1, 2, 3 for hours 1-3, then again for 4-6 and 7-8)</h3>${[1,2,3].map(b=>`<div class="grp">${LINES.map(L=>form(L,s,b)).join('')}<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:14px">Image size <select class="isz" style="width:auto">${SZO}</select></label>${LINES.map(L=>`<button data-img="${L.id}s${s}b${b}">Share ${L.title.split(' - ')[0]} image</button><button class="s" data-imgp="${L.id}s${s}b${b}" title="Save ${L.title.split(' - ')[0]} as a PNG file">Save PNG</button>`).join('')}<button class="p" data-imgg="s${s}b${b}">Share all 3 image</button><button data-imgs="s${s}b${b}">Save all 3 as PNG</button><button data-done="1">done ✓</button><button data-sv>Save</button></div></div>`).join('')}<h3>Data</h3><div class="bar"><b>All 3 lines</b><button class="p" data-xla="${s}">Export all 3 lines to Excel (one sheet)</button></div>${LINES.map(L=>`<div class="bar"><b>${L.title}</b><button class="p" data-copy="${L.id}" data-s="${s}">Copy ${L.title.split(' - ')[0]} rows</button><button data-xl="${L.id}" data-s="${s}">Export to Excel</button><button data-sv>Save</button></div><div class="wrap"><table>${head(L)}<tbody id="${L.id}_b${s}"></tbody></table></div>`).join('')}<p class="n">Copy one line at a time and paste it into the matching sheet at column B of the next empty rows.</p></section>`).join('');
+$('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>Shift ${SN[s]} (${r})</h2><div class="grid">`+fld('date'+s,'Date',s===3?yestDMY():todayDMY(),'text','DD/MM/YYYY')+fld('var'+s,'Variation +/-',0.2,'number')+fld('tests'+s,'Test hours (Cl / Gly / TFM)',TD[s])+`</div>`+LINES.map(L=>`<p class="n"><b>${L.title.split(' - ')[0]}</b> settings</p><div class="grid">`+fld('chl'+s+L.id,'Cl base',L.cl[0],'number')+fld('chlv'+s+L.id,'Cl +/-',L.cl[1],'number')+fld('gly'+s+L.id,'Gly base',L.gl[0],'number')+fld('glyv'+s+L.id,'Gly +/-',L.gl[1],'number')+fld('tmp'+s+L.id,'Temp',L.t.toFixed(1),'number')+fld('fa'+s+L.id,'FA base',L.fa.toFixed(2),'number')+fld('fav'+s+L.id,'FA +/-',0.01,'number')+fld('moi'+s+L.id,'Moisture','','number')+fld('faq'+s+L.id,'FA measured','','number')+fld('ffa'+s+L.id,'FFA measured','','number')+fld('amin'+s+L.id,'Avrg min',L.amin==null?'':L.amin,'number')+fld('amax'+s+L.id,'Avrg max',L.amax==null?'':L.amax,'number')+'</div>').join('')+`<div class="bar"><button data-gs="${s}">Regenerate this shift</button></div><h3>Sheet1 forms (Line 1, 2, 3 for hours 1-3, then again for 4-6 and 7-8)</h3>${[1,2,3].map(b=>`<div class="grp">${LINES.map(L=>form(L,s,b)).join('')}<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:14px">Image size <select class="isz" style="width:auto">${SZO}</select></label>${LINES.map(L=>`<button data-img="${L.id}s${s}b${b}">Share ${L.title.split(' - ')[0]} image</button><button class="s" data-imgp="${L.id}s${s}b${b}" title="Save ${L.title.split(' - ')[0]} as a PNG file">Save PNG</button>`).join('')}<button class="p" data-imgg="s${s}b${b}">Share all 3 image</button><button data-imgs="s${s}b${b}">Save all 3 as PNG</button><button data-done="1">done ✓</button><button data-sv>Save</button></div></div>`).join('')}<h3>Data</h3><div class="bar"><b>All 3 lines</b><button class="p" data-xla="${s}">Export all 3 lines to Excel (one sheet)</button></div>${LINES.map(L=>`<div class="bar"><b>${L.title}</b><button class="p" data-copy="${L.id}" data-s="${s}">Copy ${L.title.split(' - ')[0]} rows</button><button data-xl="${L.id}" data-s="${s}">Export to Excel</button><button data-sv>Save</button></div><div class="wrap"><table>${head(L)}<tbody id="${L.id}_b${s}"></tbody></table></div>`).join('')}<p class="n">Copy one line at a time and paste it into the matching sheet at column B of the next empty rows.</p></section>`).join('');
 function tf(tr){const c=[...tr.cells],g=i=>parseFloat(c[i].textContent),t=c[9];if(isNaN(g(7))||isNaN(g(8))){t.textContent='';t.dataset.v='';return}const v=(100-[4,5,6,7,8].reduce((a,i)=>a+(g(i)||0),0)-2)/1.086;t.dataset.v=v.toFixed(3);t.textContent=v.toFixed(2)}
 const out=(L,s,m)=>{const lo=parseFloat($('#amin'+s+L.id).value),hi=parseFloat($('#amax'+s+L.id).value);return !isNaN(lo)&&!isNaN(hi)&&(m<lo||m>hi)};
 function avg(tr){tf(tr);const ws=[...tr.querySelectorAll('.w')],v=ws.map(c=>parseFloat(c.textContent)).filter(x=>!isNaN(x)),a=tr.querySelector('.a'),m=v.length?v.reduce((s,x)=>s+x)/v.length:0,mm=tr.closest('tbody').id.match(/^(l\d)_b(\d)$/);a.dataset.v=m.toFixed(3);a.textContent=m.toFixed(2);a.classList.toggle('bad',out(LINES.find(x=>x.id==mm[1]),+mm[2],m))}
@@ -248,7 +244,7 @@ function pToast(txt,ok){
 /* a short beep so you know the pull worked */
 var AC=null;
 function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
-function beep(ok){try{const c=entAc();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;
+function beep(ok){try{const c=ac();if(!c)return;const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;
  o.connect(g);g.connect(c.destination);
  if(ok){o.type='sine';o.frequency.setValueAtTime(760,t);o.frequency.setValueAtTime(1320,t+0.16);
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.2,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);o.start(t);o.stop(t+0.42);}
@@ -299,105 +295,6 @@ function refreshQC(){
   }
  }));
 }
-/* ---------------- تسجيل سريع (داخل كل صفحة شِفت) ---------------- */
-var ENTAC=null;const entAc=()=>{try{if(!ENTAC)ENTAC=new (window.AudioContext||window.webkitAudioContext)();if(ENTAC.state=='suspended')ENTAC.resume();return ENTAC}catch(e){return null}};
-function entBeep(ok){
- try{if(localStorage.getItem('soapSound')==='0')return;const c=entAc();if(!c)return;
-  const o=c.createOscillator(),g=c.createGain(),t=c.currentTime;o.connect(g);g.connect(c.destination);
-  if(ok){o.type='sine';o.frequency.setValueAtTime(760,t);o.frequency.setValueAtTime(1040,t+0.10);o.frequency.setValueAtTime(1320,t+0.20);
-   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.22,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.42);o.start(t);o.stop(t+0.44);}
-  else{o.type='square';o.frequency.setValueAtTime(300,t);o.frequency.setValueAtTime(190,t+0.16);
-   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.18,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.30);o.start(t);o.stop(t+0.32);}
- }catch(e){}
- try{if(navigator.vibrate)navigator.vibrate(ok?[40,60,40]:[180,90,180]);}catch(e){}
-}
-function entInfo(ln){if(ln===3)return P3[L3k];return LINES.find(L=>L.id=='l'+ln);}
-function entCount(ln){return entInfo(ln).n;}
-function entName(ln){const L=entInfo(ln);return L.title;}
-function entBt(s){const e=document.getElementById('entbt'+s);return e?+e.value:1;}
-function entBtTxt(s){const b=entBt(s);return b==1?'ساعات 1-3':(b==2?'ساعات 4-6':'ساعات 7-8');}
-function entHead(s){
- return '<h3>تسجيل سريع</h3>'
- +'<p class="n">اكتب الأوزان والتحاليل هنا — بتتحفظ في <b>Shift '+SN[s]+'</b> على طول (دفعة '+entBt(s)+' = '+entBtTxt(s)+')، وبتظهر في الـ Sheet1 forms وفي جدول الداتا تحت.</p>'
- +'<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px">الدفعة</label><select id="entbt'+s+'" style="width:auto"><option value="1">1 (ساعات 1-3)</option><option value="2">2 (ساعات 4-6)</option><option value="3">3 (ساعات 7-8)</option></select>'
- +'<span class="n" style="flex:1 1 auto"></span><span class="entmsg" id="entmsg'+s+'"></span></div>'
- +'<div id="entLines'+s+'"></div>'
- +'<div class="bar"><button class="p" id="entSave'+s+'" style="font-weight:700;padding:11px 18px">حفظ في Shift '+SN[s]+'</button><span class="n">حفظ واحد — التحديث كله بيتم لوحده</span></div>';
-}
-function entBuild(s){
- const box=document.getElementById('entSec'+s);if(!box)return;
- const keep=entBt(s);              /* الدفعة المختارة لازم تفضل زي ما هي بعد إعادة البناء */
- box.innerHTML=entHead(s);
- const sel=$('#entbt'+s);if(sel)sel.value=keep;
- $('#entbt'+s).onchange=()=>{entBuild(s);entLoad(s);};
- [1,2,3].forEach(ln=>{
-  const L=entInfo(ln),n=L.n,ro=ln===2;
-  const box2=document.createElement('div');
-  box2.className='grp';box2.setAttribute('data-entln',ln);
-  box2.innerHTML='<p class="n"><b>'+entName(ln)+'</b> &nbsp;<span style="font-weight:400">'+n+' قالب</span></p>'
-   +'<div class="pw"><table class="pt entq"><tr><th>Batch No.'+(ro?' (من الشيت الأصلي)':'')+'</th><th>Moisture</th><th>FA</th><th>FFA</th></tr>'
-   +'<tr><td><input class="entbn" data-ln="'+ln+'" type="text" inputmode="numeric" placeholder="3100241611"'+(ro?' readonly':'')+'></td>'
-   +'<td><input class="entmoi" data-ln="'+ln+'" type="text" inputmode="decimal" placeholder="—"></td>'
-   +'<td><input class="entfaq" data-ln="'+ln+'" type="text" inputmode="decimal" placeholder="—"></td>'
-   +'<td><input class="entffa" data-ln="'+ln+'" type="text" inputmode="decimal" placeholder="—"></td></tr></table></div>'
-   +'<div class="pw"><table class="pt"><tr><th>NET Weight '+L.gm+' GM</th>'+[...Array(n)].map((_,i)=>'<th>'+(i+1)+'</th>').join('')+'<th>Avgr</th></tr>'
-   +'<tr><td>الوزن</td>'+[...Array(n)].map((_,i)=>'<td><input class="entw1" data-ln="'+ln+'" data-i="'+i+'" type="text" inputmode="decimal" placeholder="—"></td>').join('')+'<td class="entavg1" data-ln="'+ln+'"></td></tr></table></div>'
-   +'<div class="entwarn wl" data-ln="'+ln+'" style="margin-top:6px"></div>';
-  $('#entLines'+s).appendChild(box2);
- });
- $$('#entSec'+s+' .entw1').forEach(b=>{
-  b.onblur=()=>{const v=b.value.trim();if(v&&/^-?\d+(\.\d+)?$/.test(v)){const f=fixW(v);if(f!==v){b.value=f;entCalc(s);}}};
-  b.oninput=()=>entCalc(s);});
- $$('#entSec'+s+' .entmoi,#entSec'+s+' .entfaq,#entSec'+s+' .entffa,#entSec'+s+' .entbn').forEach(i=>i.oninput=()=>entCalc(s));
- $('#entSave'+s).onclick=()=>entSave(s);
- entLoad(s);
-}
-function entLoad(s){
- if(!document.getElementById('entLines'+s))entBuild(s);
- const bt=entBt(s);
- [1,2,3].forEach(ln=>{
-  const n=entCount(ln);
-  $$('#entSec'+s+' .entw1[data-ln="'+ln+'"]').forEach((b,i)=>{const inp=document.getElementById('l'+ln+'s'+s+'b'+bt+'_c'+i);b.value=inp&&inp.value?inp.value:'';});
-  const g=(cls,id)=>{const o=$$('#entSec'+s+' .'+cls+'[data-ln="'+ln+'"]')[0];const e=document.getElementById(id);if(o)o.value=e&&e.value!==''?e.value:'';};
-  g('entmoi','moi'+s+'l'+ln);g('entfaq','faq'+s+'l'+ln);g('entffa','ffa'+s+'l'+ln);g('entbn','l'+ln+'s'+s+'b'+bt+'_bn');
- });
- entCalc(s);
-}
-function entCalc(s){
- const miss=[];
- [1,2,3].forEach(ln=>{
-  const ws=$$('#entSec'+s+' .entw1[data-ln="'+ln+'"]').map(b=>b.value.trim());
-  const nums=ws.filter(x=>x!=='').map(parseFloat).filter(x=>!isNaN(x));
-  const av=$$('#entSec'+s+' .entavg1[data-ln="'+ln+'"]')[0];
-  if(av)av.textContent=nums.length?(nums.reduce((a,b)=>a+b,0)/nums.length).toFixed(2):'';
-  const m=[];ws.forEach((x,i)=>{if(x==='')m.push(i+1)});
-  $$('#entSec'+s+' .entw1[data-ln="'+ln+'"]').forEach((b,i)=>b.classList.toggle('bad',ws[i]===''));
-  const w=$$('#entSec'+s+' .wl[data-ln="'+ln+'"]')[0];
-  if(w){if(m.length){w.className='entwarn on wl';w.textContent='ناقص وزن لـ '+m.length+' قالب (رقم '+m.join('، ')+')';}else{w.className='entwarn wl';w.textContent='';}}
-  if(m.length)miss.push(entName(ln)+' ناقصه '+m.length+' وزن');
- });
- const w=document.getElementById('entWarn'+s);
- return miss;
-}
-function entSave(s){
- const bt=entBt(s),miss=entCalc(s),msg=document.getElementById('entmsg'+s);
- const show=(bg,bd,co,tx)=>{msg.style.display='inline-block';msg.style.background=bg;msg.style.border='1px solid '+bd;msg.style.color=co;msg.textContent=tx;};
- if(miss.length){show('#fff6e6','#e0b978','#8a5a10','ناقص: '+miss.join(' — ')+' — مش هتحفظ');entBeep(false);return;}
- let n=0;
- [1,2,3].forEach(ln=>{
-  $$('#entSec'+s+' .entw1[data-ln="'+ln+'"]').forEach((b,i)=>{
-   let v=b.value.trim();if(!v)return;if(/^-?\d+(\.\d+)?$/.test(v))v=fixW(v);
-   const inp=document.getElementById('l'+ln+'s'+s+'b'+bt+'_c'+i);
-   if(inp){inp.value=v;n++;}});
-  const set=(cls,id)=>{const o=$$('#entSec'+s+' .'+cls+'[data-ln="'+ln+'"]')[0];if(!o)return;const v=o.value.trim();if(v==='')return;const inp=document.getElementById(id);if(inp){inp.value=v;n++;}};
-  set('entmoi','moi'+s+'l'+ln);set('entfaq','faq'+s+'l'+ln);set('entffa','ffa'+s+'l'+ln);
-  if(ln!==2)set('entbn','l'+ln+'s'+s+'b'+bt+'_bn');
- });
- refreshQC();refreshW();reflag();          /* reflag يحسب الـ Avgr من جديد */
- save();
- show('#e4f5ec','#7fbf9d','#0b5c38','✓ اتسجلت '+n+' قيمة في Shift '+SN[s]+' (دفعة '+bt+')');
- entBeep(true);
-}
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
 function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
  ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=dateAuto(+k.slice(4))});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));sync();refreshQC();refreshW();reflag()}
@@ -420,16 +317,9 @@ if(b.id=='sv')save();
 else if(b.id=='ex'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snap())],{type:'application/json'}));a.download='soap_log_backup_'+today+'.json';a.click()}
 else if(b.id=='rs'&&confirm('Delete all saved data and reset the page?')){skip=true;try{['soapLogV3','soapLogV3_royal','soapLogV3_lemon','soapLogV2','soapLogV2_royal','soapLogV1'].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}});
 $('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));save();stamp('Backup imported')}catch(_){stamp('Invalid backup file')}};r.readAsText(f)});
-let CURSH=1;
-function showPg(id){
- if(id=='entry'){id='sh'+CURSH;setTimeout(()=>{const e=document.getElementById('entSec'+CURSH);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})},120);}
- if(id[0]=='s'&&id[1]=='h')CURSH=+id.slice(2);
- try{history.replaceState(null,'','#'+id)}catch(e){}
- if(/^sh[123]$/.test(id)){const s=id.slice(2);if(typeof entLoad=='function')entLoad(+s);}document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
+function showPg(id){document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
 document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k)))}});
-const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);
-const hs=(location.hash||'').slice(1);
-showPg(document.getElementById(hs)?hs:(pe&&pe.classList.contains('pg')?pg0:'sh1'));
+const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);showPg(pe&&pe.classList.contains('pg')?pg0:'sh1');
 const avsTxt=(L,s)=>{const lo=$('#amin'+s+L.id).value,hi=$('#amax'+s+L.id).value;return lo!==''&&hi!==''?lo+'-'+hi:''};
 const SPEC=['14-16','1.5 Max','0.05 Max','0.8 Max','5-7','MIN 69','42-44'];
 const flash=(b,t)=>{const o=b.textContent;b.textContent=t;setTimeout(()=>b.textContent=o,1400)};
@@ -563,7 +453,6 @@ if(saved){
    stamp('Line 3 data was reset - product mix fixed');
   }}
  apply(saved);LINES.forEach(L=>syncBatch(L));LINES.forEach(L=>{if(!$('#'+L.id+'_b1').rows.length)gen(L)});if(!/reset/.test(stamp))stamp('Restored saved data')}else LINES.forEach(gen);
-SHIFTS.forEach(([s])=>entBuild(s));
 </script><script>
 if('serviceWorker' in navigator && location.protocol!=='file:'){
  window.addEventListener('load',()=>{
