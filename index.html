@@ -64,6 +64,8 @@ table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;whit
 th,td{border:1px solid var(--line);padding:3px 8px;text-align:center}
 thead th{height:27px;position:sticky;top:0;background:var(--head);z-index:2}
 thead tr:nth-child(2) th{top:27px}
+.qcstrip{margin:4px 0 10px;padding:7px 10px;background:#eef7f1;border:1px solid #b9dcc8;border-radius:8px;font-size:13px;color:#1d4a34}
+.qcstrip b{font-size:14px;font-weight:700;color:#0b5c38}
 td[contenteditable]:focus{outline:2px solid var(--acc);outline-offset:-2px}
 td.bad{background:var(--warn)}
 td.a{font-weight:600}
@@ -97,7 +99,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v3.8</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="pullBtn" class="nb" type="button" title="Pull the saved values from the cloud now">⟳ سحب القيم</button><button id="diagBtn" class="nb" type="button" title="Show what the app sees">🔍 حالة</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.1</span></nav>
 <main>
 <section id="set" class="pg"><h2>Settings, notes and backup</h2><div id="sg" class="grid"></div>
 <p class="n">Each shift page (A, B, C) starts with its day settings and nine Sheet1 forms (three per line: #1 sets hours 1-3, #2 hours 4-6, #3 hours 7-8), followed by the data tables for Line 1, 2 and 3. Edit any Sheet1 form, or paste a block copied from Excel, and only the hours of that form regenerate. Keyboard: arrow keys, Tab and Enter move between cells like Excel (typing overwrites, F2 edits inside a cell). Cl and Gly are filled only at the test hours; TFM = ((100 - SUM(M/C to Gly) - 2) / 1.086). Amber Avrg means outside 109.5-110.5. Fill the sheet row above to copy TFM and Avrg weight as live formulas (Shift B and C continue 8 rows after each other).</p><div class="bar"><button id="ex">Export backup</button><label class="btn">Import backup<input type="file" id="imp" accept=".json" hidden></label><button id="rs">Reset all data</button></div></section>
@@ -136,7 +138,7 @@ const dateAuto=s=>DOVR[s]||(s===3?yestDMY():todayDMY());
 const TD={1:'08:30',2:'17:30',3:'01:30'};
 $('#sg').innerHTML=LINES.map(L=>fld(L.id+'_r',L.title+': sheet row of Shift A (optional)','','number')).join('');
 const form=(L,s,b)=>{const p=pid(L,s,b),H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],n=L.n;
-return `<div class="pw"><table class="pt" style="--hc:${L.hc}"><tr><th>Product Name</th><th>Batch No.</th><th>M/C</th><th>FFA</th><th>FAL</th><th colspan="${n}">NET Weight ${L.gm} GM</th><th>Avrg</th></tr><tr class="sp"><td>Line ${L.id.slice(1)}</td><td></td><td>(14-16)</td><td></td><td>0.05 Max</td>${[...Array(n)].map((_,k)=>`<td class="wc">${k+1}</td>`).join('')}<td class="avs" data-l="${L.id}" data-s="${s}"></td></tr><tr><td>${ti(p+'_p',L.p)}</td><td>${ti(p+'_bn',L.b)}</td><td>${ti(p+'_m',L.m.toFixed(2),1)}</td><td></td><td class="fal" data-l="${L.id}" data-s="${s}">${L.fa.toFixed(2)}</td>${[...Array(n)].map((_,k)=>`<td class="wc">${ti(p+'_c'+k,L.c[k].toFixed(2),1)}</td>`).join('')}<td class="mn" id="${p}_mean"></td></tr></table></div>`};
+return `<div class="pw"><table class="pt" style="--hc:${L.hc}"><tr><th>Product Name</th><th>Batch No.</th><th>M/C</th><th>FFA</th><th>FAL</th><th colspan="${n}">NET Weight ${L.gm} GM</th><th>Avrg</th></tr><tr class="sp"><td>Line ${L.id.slice(1)}</td><td></td><td>(14-16)</td><td></td><td>0.05 Max</td>${[...Array(n)].map((_,k)=>`<td class="wc">${k+1}</td>`).join('')}<td class="avs" data-l="${L.id}" data-s="${s}"></td></tr><tr><td>${ti(p+'_p',L.p)}</td><td>${ti(p+'_bn',L.b)}</td><td>${ti(p+'_m',L.m.toFixed(2),1)}</td><td class="ffacell" data-l="${L.id}" data-s="${s}">${rv('ffa'+s+L.id)}</td><td class="fal" data-l="${L.id}" data-s="${s}">${L.fa.toFixed(2)}</td>${[...Array(n)].map((_,k)=>`<td class="wc">${ti(p+'_c'+k,L.c[k].toFixed(2),1)}</td>`).join('')}<td class="mn" id="${p}_mean"></td></tr></table>`+(b===1?'<div class="qcstrip" data-l="'+L.id+'" data-s="'+s+'">Moisture <b class="qm"></b> &nbsp;·&nbsp; FA <b class="qf"></b> &nbsp;·&nbsp; FFA <b class="qff"></b></div>':'')+`</div>`};
 const SN={1:'A',2:'B',3:'C'},SZO=[15,25,35,45,55,65,75,85,95,100].map(v=>`<option value="${v}"${v==100?' selected':''}>${v}%${v==100?' (current)':''}</option>`).join('');
 $('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>Shift ${SN[s]} (${r})</h2><div class="grid">`+fld('date'+s,'Date',s===3?yestDMY():todayDMY(),'text','DD/MM/YYYY')+fld('var'+s,'Variation +/-',0.2,'number')+fld('tests'+s,'Test hours (Cl / Gly / TFM)',TD[s])+`</div>`+LINES.map(L=>`<p class="n"><b>${L.title.split(' - ')[0]}</b> settings</p><div class="grid">`+fld('chl'+s+L.id,'Cl base',L.cl[0],'number')+fld('chlv'+s+L.id,'Cl +/-',L.cl[1],'number')+fld('gly'+s+L.id,'Gly base',L.gl[0],'number')+fld('glyv'+s+L.id,'Gly +/-',L.gl[1],'number')+fld('tmp'+s+L.id,'Temp',L.t.toFixed(1),'number')+fld('fa'+s+L.id,'FA base',L.fa.toFixed(2),'number')+fld('fav'+s+L.id,'FA +/-',0.01,'number')+fld('moi'+s+L.id,'Moisture','','number')+fld('faq'+s+L.id,'FA measured','','number')+fld('ffa'+s+L.id,'FFA measured','','number')+fld('amin'+s+L.id,'Avrg min',L.amin==null?'':L.amin,'number')+fld('amax'+s+L.id,'Avrg max',L.amax==null?'':L.amax,'number')+'</div>').join('')+`<div class="bar"><button data-gs="${s}">Regenerate this shift</button></div><h3>Sheet1 forms (Line 1, 2, 3 for hours 1-3, then again for 4-6 and 7-8)</h3>${[1,2,3].map(b=>`<div class="grp">${LINES.map(L=>form(L,s,b)).join('')}<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:14px">Image size <select class="isz" style="width:auto">${SZO}</select></label>${LINES.map(L=>`<button data-img="${L.id}s${s}b${b}">Share ${L.title.split(' - ')[0]} image</button><button class="s" data-imgp="${L.id}s${s}b${b}" title="Save ${L.title.split(' - ')[0]} as a PNG file">Save PNG</button>`).join('')}<button class="p" data-imgg="s${s}b${b}">Share all 3 image</button><button data-imgs="s${s}b${b}">Save all 3 as PNG</button><button data-done="1">done ✓</button><button data-sv>Save</button></div></div>`).join('')}<h3>Data</h3><div class="bar"><b>All 3 lines</b><button class="p" data-xla="${s}">Export all 3 lines to Excel (one sheet)</button></div>${LINES.map(L=>`<div class="bar"><b>${L.title}</b><button class="p" data-copy="${L.id}" data-s="${s}">Copy ${L.title.split(' - ')[0]} rows</button><button data-xl="${L.id}" data-s="${s}">Export to Excel</button><button data-sv>Save</button></div><div class="wrap"><table>${head(L)}<tbody id="${L.id}_b${s}"></tbody></table></div>`).join('')}<p class="n">Copy one line at a time and paste it into the matching sheet at column B of the next empty rows.</p></section>`).join('');
 function tf(tr){const c=[...tr.cells],g=i=>parseFloat(c[i].textContent),t=c[9];if(isNaN(g(7))||isNaN(g(8))){t.textContent='';t.dataset.v='';return}const v=(100-[4,5,6,7,8].reduce((a,i)=>a+(g(i)||0),0)-2)/1.086;t.dataset.v=v.toFixed(3);t.textContent=v.toFixed(2)}
@@ -175,9 +177,14 @@ else if(b.dataset.copy)copy(tsv(LINES.find(L=>L.id==b.dataset.copy),b.dataset.s)
 document.addEventListener('focusout',ev=>{const t=ev.target;
  if(t.matches&&t.matches('td.qcell')){const id=t.dataset.set,inp=id&&document.getElementById(id);
    if(inp){const v=String(t.textContent||'').trim();if(inp.value!==v){inp.value=v;later();}}return;}
+ if(t.matches&&t.matches('td.w[contenteditable]')){
+  var idw=t.dataset.w,inpw=idw&&document.getElementById(idw);
+  if(inpw){var vw=String(t.textContent||'').trim();if(inpw.value!==vw){inpw.value=vw;later();}}
+  return;}
  if(!t.matches||!t.matches('td.w[contenteditable]'))return;const cur=String(t.textContent||'').trim(),nv=fixW(cur);if(nv!==cur){t.textContent=nv;t.dispatchEvent(new Event('input',{bubbles:true}))}});
 document.addEventListener('input',ev=>{const t=ev.target;
-if(t.tagName=='INPUT'){if(/^(moi|faq|ffa)\d+l\d$/.test(t.id)){refreshQC();return}const dm=t.id.match(/^date(\d)$/);if(dm){DOVR[dm[1]]=t.value;t.dataset.touched='1';sync();return}const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
+if(t.tagName=='INPUT'){if(/^(moi|faq|ffa)\d+l\d$/.test(t.id)){refreshQC();return}
+  if(/^l\ds\db\d_c\d+$/.test(t.id)){refreshW();return}const dm=t.id.match(/^date(\d)$/);if(dm){DOVR[dm[1]]=t.value;t.dataset.touched='1';sync();return}const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
 const tr=t.closest('tr');if(tr&&t.closest('.wrap tbody'))avg(tr)});
 document.addEventListener('change',ev=>{const m=ev.target.id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|t)$/);if(m)genBlock(LINES.find(L=>L.id==m[1]),+m[2],+m[3])});
 const ed=tr=>[...tr.querySelectorAll('td[contenteditable],input')];
@@ -244,18 +251,53 @@ function beep(ok){try{const c=ac();if(!c)return;const o=c.createOscillator(),g=c
  else{o.type='square';o.frequency.setValueAtTime(300,t);o.frequency.setValueAtTime(190,t+0.16);
   g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.15,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.34);o.start(t);o.stop(t+0.36);}
  if(navigator.vibrate)navigator.vibrate(ok?[45,60,45]:[220,90,220]);}catch(e){}}
+function refreshW(){
+ LINES.forEach(L=>SHIFTS.forEach(([s])=>{
+  var tb=document.getElementById(L.id+'_b'+s);if(!tb)return;
+  for(var r=0;r<tb.rows.length;r++){
+   var row=tb.rows[r],b=0;
+   for(var q=0;q<BL.length;q++){if(r>=BL[q][0]&&r<BL[q][1]){b=q+1;break;}}
+   if(!b)continue;
+   for(var k=0;k<L.n;k++){
+    var cell=row.cells[11+k];if(!cell)continue;
+    var id=L.id+'s'+s+'b'+b+'_c'+k;
+    cell.dataset.w=id;cell.classList.add('wcell');
+    var inp=document.getElementById(id);
+    if(inp&&inp.value!==''&&document.activeElement!==cell)cell.textContent=inp.value;
+   }
+  }
+ }));
+}
 function refreshQC(){
  LINES.forEach(L=>SHIFTS.forEach(([s])=>{
   var t=document.getElementById(L.id+'_b'+s);if(!t)return;
-  t.querySelectorAll('td.qcell').forEach(function(c){
-   var id=c.dataset.set,inp=id&&document.getElementById(id);
-   if(inp&&inp.value!==''&&document.activeElement!==c)c.textContent=inp.value;
-  });
+  for(var r=0;r<t.rows.length;r++){
+   var row=t.rows[r];
+   /* the cells are found by their column, not by a class: the table saved in the
+      cloud may still be an old copy without the class */
+   var put=function(idx,id){var c=row.cells[idx];if(!c)return;
+    var inp=document.getElementById(id);
+    c.classList.add('qcell');c.dataset.set=id;
+    if(inp&&inp.value!==''&&document.activeElement!==c)c.textContent=inp.value;};
+   put(5,'ffa'+s+L.id);    /* FFA */
+   put(6,'faq'+s+L.id);    /* FA */
+   put(10,'moi'+s+L.id);   /* Moisture (was Temp in the old tables) */
+  }
+  /* the FFA cell of the Sheet1 form + the strip under it */
+  var ff=document.querySelectorAll('.ffacell[data-s="'+s+'"][data-l="'+L.id+'"]');
+  for(var q=0;q<ff.length;q++){var inp=document.getElementById('ffa'+s+L.id);if(inp&&inp.value!=='')ff[q].textContent=inp.value;}
+  var strip=document.querySelector('.qcstrip[data-s="'+s+'"][data-l="'+L.id+'"]');
+  if(strip){
+   var g=function(id){var e=document.getElementById(id);return e&&e.value!==''?e.value:'—';};
+   strip.querySelector('.qm').textContent=g('moi'+s+L.id);
+   strip.querySelector('.qf').textContent=g('faq'+s+L.id);
+   strip.querySelector('.qff').textContent=g('ffa'+s+L.id);
+  }
  }));
 }
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
 function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
- ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=dateAuto(+k.slice(4))});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));sync();refreshQC();reflag()}
+ ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=dateAuto(+k.slice(4))});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));sync();refreshQC();refreshW();reflag()}
 const isL3=id=>/^l3|l3$/.test(id),rd=k=>{try{return JSON.parse(fetchS(k)||'null')}catch(e){return null}};
 const splitD=d=>{const c={v:{},t:{}},l={v:{},t:{}};['v','t'].forEach(w=>Object.entries((d&&d[w])||{}).forEach(([k,x])=>(isL3(k)?l:c)[w][k]=x));return [c,l]};
 function fixAllW(){document.querySelectorAll('td.w[contenteditable]').forEach(function(c){var v=String(c.textContent||'').trim();if(v&&/^-?\d+(\.\d+)?$/.test(v)){var f=fixW(v);if(f!==v)c.textContent=f;}})}
