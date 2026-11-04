@@ -129,7 +129,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v4.9</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.0</span></nav>
 <main>
 <section id="ent" class="pg"><h2>Weights Entry</h2>
 <div class="card"><div class="grid">
@@ -1006,9 +1006,40 @@ function fill(){
   var bn=$e('.bn[data-l="'+L.id+'"]');if(bn)bn.value=cur(bnId(L,s,b));
  });
 }
+function nextW(x){
+ var line=x.dataset.l,list=$$e('.w[data-l="'+line+'"]'),j=list.indexOf(x);
+ if(j>=0&&j<list.length-1)return list[j+1];
+ var ids=LINES.map(function(L){return L.id}),k=ids.indexOf(line);
+ if(k>=0&&k<ids.length-1)return $e('.w[data-l="'+ids[k+1]+'"][data-i="0"]');
+ return null;
+}
 function bind(){
+ var noAdv=false;
+ function goNext(x){
+  var nx=nextW(x);if(!nx)return;
+  noAdv=true;
+  try{nx.focus();nx.select()}catch(e){}
+  setTimeout(function(){noAdv=false},80);
+ }
  $$e('.w').forEach(function(x){
   x.addEventListener('blur',function(){var v=x.value.trim();if(v&&/^-?\d+(\.\d+)?$/.test(v)){var f=fix(v);if(f!==v){x.value=f;x.classList.add('fixed');calc()}}});
+  /* after a weight is recorded the cursor goes down to the next box */
+  x.addEventListener('focusout',function(ev){
+   if(x.value.trim()===''||noAdv)return;
+   var rt=ev.relatedTarget;
+   if(rt&&rt.nodeType===1&&((rt.classList&&rt.classList.contains('w'))||/^(BUTTON|SELECT|INPUT|TEXTAREA)$/.test(rt.tagName)))return;
+   setTimeout(function(){
+    if(noAdv)return;
+    var ae=document.activeElement;
+    if(ae&&ae.classList&&ae.classList.contains('w'))return;
+    goNext(x);
+   },30);
+  });
+  x.addEventListener('keydown',function(ev){
+   if(ev.key!=='Enter')return;
+   ev.preventDefault();
+   goNext(x);
+  });
  });
  $$e('.w,.moi,.faq,.ffa,.bn').forEach(function(x){
   x.addEventListener('input',function(){dirty=true;calc()});
