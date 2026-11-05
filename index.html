@@ -128,7 +128,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.8</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.9</span></nav>
 <main>
 <section id="ent" class="pg"><h2>Weights Entry</h2>
 <div class="card"><div class="grid">
@@ -222,7 +222,7 @@ return [...$('#'+L.id+'_b'+s).rows].map((tr,k)=>[...tr.cells].map((c,j,a)=>j==a.
 async function copy(t,btn){try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove()}
 const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)}
 document.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
-if(b.id=='all'){if(confirm('Regenerate the weights that you did not type.\nThe weights you typed stay as they are.\n\nContinue?'))LINES.forEach(L=>gen(L,true));}
+if(b.id=='all'){if(confirm('Regenerate the weights of ALL the shifts.\n\nThe weights you typed just now stay as they are.\nThe other ones (including the ones already saved in the cloud) get new random values and are saved again.\n\nContinue?'))LINES.forEach(L=>gen(L,true));}
 else if(b.dataset.gen)gen(LINES.find(L=>L.id==b.dataset.gen),true);
 else if(b.dataset.copy)copy(tsv(LINES.find(L=>L.id==b.dataset.copy),b.dataset.s),b)});
 document.addEventListener('focusout',ev=>{const t=ev.target;
@@ -348,7 +348,7 @@ function refreshQC(){
  }));
 }
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
-function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e){e.value=v;if(/_c\d+$/.test(k))e.dataset.manual='1'}});
+function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
  ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=dateAuto(+k.slice(4))});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));sync();refreshQC();refreshW();reflag()}
 const isL3=id=>/^l3|l3$/.test(id),rd=k=>{try{return JSON.parse(fetchS(k)||'null')}catch(e){return null}};
 const splitD=d=>{const c={v:{},t:{}},l={v:{},t:{}};['v','t'].forEach(w=>Object.entries((d&&d[w])||{}).forEach(([k,x])=>(isL3(k)?l:c)[w][k]=x));return [c,l]};
@@ -371,7 +371,7 @@ else if(b.id=='cc'){b.textContent='Clearing...';try{if(window.caches)caches.keys
 else if(b.id=='rs'&&confirm('Delete all saved data and reset the page?')){skip=true;try{['soapLogV3','soapLogV3_royal','soapLogV3_lemon','soapLogV2','soapLogV2_royal','soapLogV1'].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}});
 $('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));save();stamp('Backup imported')}catch(_){stamp('Invalid backup file')}};r.readAsText(f)});
 function showPg(id){document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
-document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k,true)))}});
+document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;if(confirm('Regenerate the weights of Shift '+SN[s]+'.\n\nThe weights you typed just now stay as they are.\nThe other ones (including the ones already saved in the cloud) get new random values and are saved again.\n\nContinue?'))LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k,true)))}});
 const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);showPg(pe&&pe.classList.contains('pg')?pg0:'ent');
 const avsTxt=(L,s)=>{const lo=$('#amin'+s+L.id).value,hi=$('#amax'+s+L.id).value;return lo!==''&&hi!==''?lo+'-'+hi:''};
 const SPEC=['14-16','1.5 Max','0.05 Max','0.8 Max','5-7','MIN 69','42-44'];
