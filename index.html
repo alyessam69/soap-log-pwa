@@ -128,7 +128,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.4</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.5</span></nav>
 <main>
 <section id="ent" class="pg"><h2>Weights Entry</h2>
 <div class="card"><div class="grid">
@@ -211,7 +211,10 @@ function genBlock(L,s,b,toForm){const H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],tests=
 for(let i=a;i<z;i++){const t=document.createElement('tbody');t.innerHTML=rowHtml(L,s,b,H[i],tests.has(H[i]),v);const r=t.rows[0];if(tb.rows[i])tb.rows[i].replaceWith(r);else tb.append(r)}
 /* the new random weights also go into the form - otherwise the table is
    overwritten again by refreshW() and the button looks like it does nothing */
-if(toForm)for(let k=0;k<L.n;k++){const c=tb.rows[a]&&tb.rows[a].cells[11+k];if(!c)continue;const inp=document.getElementById(pid(L,s,b)+'_c'+k);if(inp){inp.value=c.textContent.trim();if(typeof markEdit==='function')markEdit(inp.id);if(typeof later==='function')later()}}
+if(toForm)for(let k=0;k<L.n;k++){const c=tb.rows[a]&&tb.rows[a].cells[11+k];if(!c)continue;const inp=document.getElementById(pid(L,s,b)+'_c'+k);
+/* the weights the user typed (or that came from the cloud) are never overwritten */
+   if(inp&&inp.dataset.manual!=='1'){inp.value=c.textContent.trim();if(typeof markEdit==='function')markEdit(inp.id);if(typeof later==='function')later()}}
+ refreshW();
 setPB(L,s,b);sync();for(let i=a;i<z;i++)avg(tb.rows[i],L);meanB(L,s,b)}
 function gen(L,toForm){SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>genBlock(L,s,b,toForm)))}
 function tsv(L,s){const r0=parseInt($('#'+L.id+'_r').value),last=String.fromCharCode(76+L.n);
@@ -219,7 +222,7 @@ return [...$('#'+L.id+'_b'+s).rows].map((tr,k)=>[...tr.cells].map((c,j,a)=>j==a.
 async function copy(t,btn){try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove()}
 const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)}
 document.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
-if(b.id=='all'){if(confirm('Regenerate all the weights?\nThe weights you typed will be replaced by new random ones.'))LINES.forEach(L=>gen(L,true));}
+if(b.id=='all'){if(confirm('Regenerate the weights that you did not type.\nThe weights you typed stay as they are.\n\nContinue?'))LINES.forEach(L=>gen(L,true));}
 else if(b.dataset.gen)gen(LINES.find(L=>L.id==b.dataset.gen),true);
 else if(b.dataset.copy)copy(tsv(LINES.find(L=>L.id==b.dataset.copy),b.dataset.s),b)});
 document.addEventListener('focusout',ev=>{const t=ev.target;
@@ -232,7 +235,7 @@ document.addEventListener('focusout',ev=>{const t=ev.target;
  if(!t.matches||!t.matches('td.w[contenteditable]'))return;const cur=String(t.textContent||'').trim(),nv=fixW(cur);if(nv!==cur){t.textContent=nv;t.dispatchEvent(new Event('input',{bubbles:true}))}});
 document.addEventListener('input',ev=>{const t=ev.target;
 if(t.tagName=='INPUT'){markEdit(t.id);if(/^(moi|faq|ffa)\d+l\d$/.test(t.id)||/^l\ds\db\d_(m|fa|ffa)$/.test(t.id)){refreshQC();return}
-  if(/^l\ds\db\d_c\d+$/.test(t.id)){const mw=t.id.match(/^(l\d)s(\d)b(\d)_/),LW=mw&&LINES.find(x=>x.id==mw[1]);if(LW)meanB(LW,+mw[2],+mw[3]);refreshW();return}const dm=t.id.match(/^date(\d)$/);if(dm){DOVR[dm[1]]=t.value;t.dataset.touched='1';sync();return}const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
+  if(/^l\ds\db\d_c\d+$/.test(t.id)){t.dataset.manual='1';const mw=t.id.match(/^(l\d)s(\d)b(\d)_/),LW=mw&&LINES.find(x=>x.id==mw[1]);if(LW)meanB(LW,+mw[2],+mw[3]);refreshW();return}const dm=t.id.match(/^date(\d)$/);if(dm){DOVR[dm[1]]=t.value;t.dataset.touched='1';sync();return}const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
 const tr=t.closest('tr');if(tr&&t.closest('.wrap tbody'))avg(tr)});
 document.addEventListener('change',ev=>{const m=ev.target.id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|ffa|t)$/);if(m)genBlock(LINES.find(L=>L.id==m[1]),+m[2],+m[3])});
 const ed=tr=>[...tr.querySelectorAll('td[contenteditable],input')];
@@ -345,7 +348,7 @@ function refreshQC(){
  }));
 }
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
-function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e)e.value=v});
+function apply(d){Object.entries(d.v||{}).forEach(([k,v])=>{const e=document.getElementById(k);if(e){e.value=v;if(/_c\d+$/.test(k))e.dataset.manual='1'}});
  ['date1','date2','date3'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=dateAuto(+k.slice(4))});Object.entries(d.t||{}).forEach(([k,h])=>{const e=document.getElementById(k);if(e)e.innerHTML=h});syncFal();LINES.forEach(L=>SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>meanB(L,s,b))));LINES.forEach(L=>syncBatch(L));sync();refreshQC();refreshW();reflag()}
 const isL3=id=>/^l3|l3$/.test(id),rd=k=>{try{return JSON.parse(fetchS(k)||'null')}catch(e){return null}};
 const splitD=d=>{const c={v:{},t:{}},l={v:{},t:{}};['v','t'].forEach(w=>Object.entries((d&&d[w])||{}).forEach(([k,x])=>(isL3(k)?l:c)[w][k]=x));return [c,l]};
