@@ -128,7 +128,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.7</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.8</span></nav>
 <main>
 <section id="ent" class="pg"><h2>Weights Entry</h2>
 <div class="card"><div class="grid">
@@ -158,7 +158,7 @@ const LINES=[
 {id:'l2',title:'Line 2 - Savannah (771)',sheet:'Line 2 Savannah (771)',hc:'#b6dba3',p:'Savannah Classic',b:'3100241611',n:10,c:[110.71,110.68,110.61,109.61,110.01,110.21,110.22,110.31,111.01,110.51],m:16.5,t:45,fa:.05,gm:110,amin:109.5,amax:110.5,cl:[.55,.1],gl:[7.55,.1]},
 Object.assign({id:'l3',hc:'#f5d08b'},P3[L3k])];
 const SHIFTS=[[1,'08:30-15:30',8],[2,'16:30-23:30',16],[3,'00:30-07:30',0]];const hrs=st=>[...Array(8)].map((_,i)=>String(st+i).padStart(2,'0')+':30');
-const head=L=>`<thead><tr><th rowspan="2">Date</th><th rowspan="2">Time</th><th rowspan="2">Product Name</th><th rowspan="2">Batch No.</th><th rowspan="2">M/C</th><th rowspan="2">FFA</th><th rowspan="2">FA</th><th rowspan="2">Cl</th><th rowspan="2">Gly</th><th rowspan="2">TFM</th><th rowspan="2">Moisture</th><th colspan="${L.n}">NET Weight ${L.gm} GM</th><th rowspan="2">Avrg weight</th></tr><tr>${[...Array(L.n)].map((_,i)=>`<th>${i+1}</th>`).join('')}</tr></thead>`;
+const head=L=>`<thead><tr><th rowspan="2">Date</th><th rowspan="2">Time</th><th rowspan="2">Product Name</th><th rowspan="2">Batch No.</th><th rowspan="2">M/C</th><th rowspan="2">FFA</th><th rowspan="2">FA</th><th rowspan="2">Cl</th><th rowspan="2">Gly</th><th rowspan="2">TFM</th><th rowspan="2">Temp</th><th colspan="${L.n}">NET Weight ${L.gm} GM</th><th rowspan="2">Avrg weight</th></tr><tr>${[...Array(L.n)].map((_,i)=>`<th>${i+1}</th>`).join('')}</tr></thead>`;
 const BL=[[0,3],[3,6],[6,8]],pid=(L,s,b)=>L.id+'s'+s+'b'+b;
 const rnd=(b,v,d)=>+(b+(Math.random()*2-1)*v).toFixed(d);
 const num=id=>parseFloat($('#'+id).value)||0;
@@ -206,7 +206,7 @@ function syncBatch(L,v){
 function rowHtml(L,s,b,hr,T,v){const p=pid(L,s,b),e=x=>`<td contenteditable inputmode="decimal">${x}</td>`;
 return `<tr><td class="d"></td><td>${hr}</td><td class="pn"></td><td class="b"></td>`+e(rnd(num(p+'_m'),v,2).toFixed(2))+'<td contenteditable inputmode="decimal" class="qcell" data-set="'+p+'_ffa">'+(rv(p+'_ffa')||rv('ffa'+s+L.id)||'')+'</td>'+'<td contenteditable inputmode="decimal" class="qcell" data-set="'+p+'_fa">'+(rv(p+'_fa')||rv('faq'+s+L.id)||Math.max(0,rnd(num('fa'+s+L.id),num('fav'+s+L.id),2)).toFixed(2))+'</td>'+
 (T?e(rnd(num('chl'+s+L.id),num('chlv'+s+L.id),2).toFixed(2))+e(rnd(num('gly'+s+L.id),num('glyv'+s+L.id),2).toFixed(2)):'<td contenteditable inputmode="decimal"></td>'.repeat(2))+'<td class="t"></td>'+
-'<td contenteditable inputmode="decimal" class="qcell" data-set="moi'+s+L.id+'">'+(rv('moi'+s+L.id)||rnd(num('tmp'+s+L.id),v,1).toFixed(1))+'</td>'+[...Array(L.n)].map((_,k)=>`<td class="w" contenteditable inputmode="decimal">${rnd(num(p+'_c'+k),v,2).toFixed(2)}</td>`).join('')+'<td class="a"></td></tr>'}
+'<td contenteditable inputmode="decimal" class="qcell" data-set="tmp'+s+L.id+'">'+(rv('tmp'+s+L.id)||'')+'</td>'+[...Array(L.n)].map((_,k)=>`<td class="w" contenteditable inputmode="decimal">${rnd(num(p+'_c'+k),v,2).toFixed(2)}</td>`).join('')+'<td class="a"></td></tr>'}
 function genBlock(L,s,b,toForm){const H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],tests=new Set($('#tests'+s).value.split(/[,\s]+/).filter(Boolean).map(x=>x.padStart(5,'0'))),v=num('var'+s),tb=$('#'+L.id+'_b'+s);
 for(let i=a;i<z;i++){const t=document.createElement('tbody');t.innerHTML=rowHtml(L,s,b,H[i],tests.has(H[i]),v);const r=t.rows[0];if(tb.rows[i])tb.rows[i].replaceWith(r);else tb.append(r)}
 /* the new random weights also go into the form - otherwise the table is
@@ -342,7 +342,7 @@ function refreshQC(){
     put(5,p+'_ffa',rv('ffa'+s+L.id));   /* FFA - the measured value of the shift settings if the batch is empty */
     put(6,p+'_fa',rv('faq'+s+L.id));    /* FA  - the same */
    }
-   put(10,'moi'+s+L.id);   /* Moisture column (was Temp in the old tables) */
+   put(10,'tmp'+s+L.id);   /* Temp - the temperature of that line, like the paper sheet */
    try{if(row.querySelector('.a'))avg(row)}catch(e){}   /* TFM + Avrg + flag follow the new values */
   }
  }));
@@ -442,7 +442,7 @@ function xlsTbl(L,s,row0,nMax,withHead){
     shifts the digits (45.4 -> 4.5, 110.63 -> 1.11) - the plain codes are correct */
  const F=['dd/mm/yyyy','h:mm','@','0','0.00','0.00','0.00','0.00','0.00','0.00','0.0'];
  let h='';
- if(withHead)h+='<tr><td></td>'+rs('Date',80)+rs('Time',50)+rs('Product Name',190)+rs('Batch No.',95)+['Moisture %','FFA %','FA %','Chloride %','Glycerin %','TFM %','Temp'].map(t=>c(t,bl)).join('')+c('NET Weight  '+L.gm+' GM',bl,` colspan="${nMax}"`)+rs('Avrg weight')+'</tr><tr><td></td>'+SPEC.map(t=>c(t,bl)).join('')+[...Array(nMax)].map((_,i)=>c(i<n?i+1:'',bl)).join('')+'</tr>';
+ if(withHead)h+='<tr><td></td>'+rs('Date',80)+rs('Time',50)+rs('Product Name',190)+rs('Batch No.',95)+['M/C','FFA','FA','Cl','Gly','TFM','Temp'].map(t=>c(t,bl)).join('')+c('NET Weight  '+L.gm+' GM',bl,` colspan="${nMax}"`)+rs('Avrg weight')+'</tr><tr><td></td>'+SPEC.map(t=>c(t,bl)).join('')+[...Array(nMax)].map((_,i)=>c(i<n?i+1:'',bl)).join('')+'</tr>';
  rows.forEach((tr,i)=>{const r=row0+i,t=[...tr.cells].map(x=>x.textContent.trim());h+='<tr><td></td>';
  t.forEach((v,j)=>{const nf=j<11?F[j]:'0.00',st=`mso-number-format:'${nf}';`;
  const av=j===t.length-1;
