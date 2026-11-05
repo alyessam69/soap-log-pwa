@@ -128,7 +128,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.6</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v5.7</span></nav>
 <main>
 <section id="ent" class="pg"><h2>Weights Entry</h2>
 <div class="card"><div class="grid">
@@ -314,7 +314,7 @@ function refreshW(){
     var id=L.id+'s'+s+'b'+b+'_c'+k;
     cell.dataset.w=id;cell.classList.add('wcell');
     var inp=document.getElementById(id);
-    if(inp&&inp.value!==''&&document.activeElement!==cell)cell.textContent=inp.value;
+    if(inp&&document.activeElement!==cell)cell.textContent=inp.value;  /* an empty weight must clear the cell too */
    }
    /* the weights were written straight into the cells, so the row's Avrg weight, TFM and the amber flag must be recalculated */
    try{if(row.querySelector('.a'))avg(row)}catch(e){}
