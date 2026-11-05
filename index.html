@@ -128,7 +128,7 @@ tbody tr:nth-child(even){background:color-mix(in srgb,var(--head) 35%,transparen
 <link rel="icon" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 </head><body>
-<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v6.0</span></nav>
+<nav><b>Soap Bar Daily Log Generator</b><a href="#" data-pg="ent">Entry</a><a href="#" data-pg="sh1">Shift A</a><a href="#" data-pg="sh2">Shift B</a><a href="#" data-pg="sh3">Shift C</a><a href="#" data-pg="set">Settings</a><label class="as"><input type="checkbox" id="auto" checked> Auto-save</label><label class="as">Image size <select class="isz"><option value="15">15%</option><option value="25">25%</option><option value="35">35%</option><option value="45">45%</option><option value="55">55%</option><option value="65">65%</option><option value="75">75%</option><option value="85">85%</option><option value="95">95%</option><option value="100" selected>100% (current)</option></select></label><label class="as">Line 3 <select id="l3sel"><option value="royal">6 soaps - Royal (original)</option><option value="lemon">5 soaps - Lemon Blossom&amp;Orange</option></select></label><span id="st"></span><button id="sv">Save now</button><button class="p" id="all">Regenerate all</button><button id="install" class="nb" type="button" hidden>Install app</button><button id="syncBtn" class="nb" type="button">Sync</button><span id="syncSt" class="syncst" hidden></span><button id="upd" class="nb" type="button" title="Check for a newer version and reload">Update</button><span id="ver" class="syncst">v6.4</span></nav>
 <main>
 <section id="ent" class="pg"><h2>Weights Entry</h2>
 <div class="card"><div class="grid">
@@ -161,7 +161,7 @@ const SHIFTS=[[1,'08:30-15:30',8],[2,'16:30-23:30',16],[3,'00:30-07:30',0]];cons
 const head=L=>`<thead><tr><th rowspan="2">Date</th><th rowspan="2">Time</th><th rowspan="2">Product Name</th><th rowspan="2">Batch No.</th><th rowspan="2">M/C</th><th rowspan="2">FFA</th><th rowspan="2">FA</th><th rowspan="2">Cl</th><th rowspan="2">Gly</th><th rowspan="2">TFM</th><th rowspan="2">Temp</th><th colspan="${L.n}">NET Weight ${L.gm} GM</th><th rowspan="2">Avrg weight</th></tr><tr>${[...Array(L.n)].map((_,i)=>`<th>${i+1}</th>`).join('')}</tr></thead>`;
 const BL=[[0,3],[3,6],[6,8]],pid=(L,s,b)=>L.id+'s'+s+'b'+b;
 const rnd=(b,v,d)=>+(b+(Math.random()*2-1)*v).toFixed(d);
-const num=id=>parseFloat($('#'+id).value)||0;
+const num=id=>{const e=document.getElementById(id);return e?parseFloat(e.value)||0:0};
 const rv=id=>{const e=document.getElementById(id);return e&&e.value!==''?String(e.value).trim():''};
 const fld=(id,lb,val,type,ph)=>`<label>${lb}<input id="${id}" type="${type||'text'}" value="${val}"${ph?` placeholder="${ph}"`:''} ${type=='number'?'step="any"':''}></label>`;
 const ti=(id,v,n)=>`<input id="${id}" value="${v}"${n?' data-n="1" inputmode="decimal"':''}>`;
@@ -182,62 +182,192 @@ $('#sg').innerHTML=LINES.map(L=>fld(L.id+'_r',L.title+': sheet row of Shift A (o
 const form=(L,s,b)=>{const p=pid(L,s,b),H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],n=L.n;
 return `<div class="pw"><table class="pt" style="--hc:${L.hc}"><tr><th>Product Name</th><th>Batch No.</th><th>M/C</th><th>FFA</th><th>FAL</th><th colspan="${n}">NET Weight ${L.gm} GM</th><th>Avrg</th></tr><tr class="sp"><td>Line ${L.id.slice(1)}</td><td></td><td>(14-16)</td><td></td><td>0.05 Max</td>${[...Array(n)].map((_,k)=>`<td class="wc">${k+1}</td>`).join('')}<td class="avs" data-l="${L.id}" data-s="${s}"></td></tr><tr><td>${ti(p+'_p',L.p)}</td><td>${ti(p+'_bn',L.b)}</td><td>${ti(p+'_m',L.m.toFixed(2),1)}</td><td>${ti(p+'_ffa','',1)}</td><td><input id="${p}_fa" value="" placeholder="${L.fa.toFixed(2)}" data-n="1" inputmode="decimal"></td>${[...Array(n)].map((_,k)=>`<td class="wc">${ti(p+'_c'+k,L.c[k].toFixed(2),1)}</td>`).join('')}<td class="mn" id="${p}_mean"></td></tr></table>`+`</div>`};
 const SN={1:'A',2:'B',3:'C'},SZO=[15,25,35,45,55,65,75,85,95,100].map(v=>`<option value="${v}"${v==100?' selected':''}>${v}%${v==100?' (current)':''}</option>`).join('');
-$('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>Shift ${SN[s]} (${r})</h2><div class="grid">`+fld('date'+s,'Date',s===3?yestDMY():todayDMY(),'text','DD/MM/YYYY')+fld('var'+s,'Variation +/-',0.2,'number')+fld('tests'+s,'Test hours (Cl / Gly / TFM)',TD[s])+`</div>`+LINES.map(L=>`<p class="n"><b>${L.title.split(' - ')[0]}</b> settings</p><div class="grid">`+fld('chl'+s+L.id,'Cl base',L.cl[0],'number')+fld('chlv'+s+L.id,'Cl +/-',L.cl[1],'number')+fld('gly'+s+L.id,'Gly base',L.gl[0],'number')+fld('glyv'+s+L.id,'Gly +/-',L.gl[1],'number')+fld('tmp'+s+L.id,'Temp',L.t.toFixed(1),'number')+fld('fa'+s+L.id,'FA base',L.fa.toFixed(2),'number')+fld('fav'+s+L.id,'FA +/-',0.01,'number')+fld('moi'+s+L.id,'Moisture','','number')+fld('faq'+s+L.id,'FA measured','','number')+fld('ffa'+s+L.id,'FFA measured','','number')+fld('amin'+s+L.id,'Avrg min',L.amin==null?'':L.amin,'number')+fld('amax'+s+L.id,'Avrg max',L.amax==null?'':L.amax,'number')+'</div>').join('')+`<div class="bar"><button data-gs="${s}">Regenerate this shift</button></div><h3>Sheet1 forms (Line 1, 2, 3 for hours 1-3, then again for 4-6 and 7-8)</h3>${[1,2,3].map(b=>`<div class="grp">${LINES.map(L=>form(L,s,b)).join('')}<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:14px">Image size <select class="isz" style="width:auto">${SZO}</select></label>${LINES.map(L=>`<button data-img="${L.id}s${s}b${b}">Share ${L.title.split(' - ')[0]} image</button><button class="s" data-imgp="${L.id}s${s}b${b}" title="Save ${L.title.split(' - ')[0]} as a PNG file">Save PNG</button>`).join('')}<button class="p" data-imgg="s${s}b${b}">Share all 3 image</button><button data-imgs="s${s}b${b}">Save all 3 as PNG</button><button data-done="1">done ✓</button><button data-sv>Save</button></div></div>`).join('')}<h3>Data</h3><div class="bar"><b>All 3 lines</b><button class="p" data-xla="${s}">Export all 3 lines to Excel (one sheet)</button></div>${LINES.map(L=>`<div class="bar"><b>${L.title}</b><button class="p" data-copy="${L.id}" data-s="${s}">Copy ${L.title.split(' - ')[0]} rows</button><button data-xl="${L.id}" data-s="${s}">Export to Excel</button><button data-sv>Save</button></div><div class="wrap"><table>${head(L)}<tbody id="${L.id}_b${s}"></tbody></table></div>`).join('')}<p class="n">Copy one line at a time and paste it into the matching sheet at column B of the next empty rows.</p></section>`).join('');
-function tf(tr){const c=[...tr.cells],g=i=>parseFloat(c[i].textContent),t=c[9];if(isNaN(g(7))||isNaN(g(8))){t.textContent='';t.dataset.v='';return}const v=(100-[4,5,6,7,8].reduce((a,i)=>a+(g(i)||0),0)-2)/1.086;t.dataset.v=v.toFixed(3);t.textContent=v.toFixed(2)}
-const out=(L,s,m)=>{const lo=parseFloat($('#amin'+s+L.id).value),hi=parseFloat($('#amax'+s+L.id).value);return !isNaN(lo)&&!isNaN(hi)&&(m<lo||m>hi)};
-function avg(tr){tf(tr);const ws=[...tr.querySelectorAll('.w')],v=ws.map(c=>parseFloat(c.textContent)).filter(x=>!isNaN(x)),a=tr.querySelector('.a'),m=v.length?v.reduce((s,x)=>s+x)/v.length:0,mm=tr.closest('tbody').id.match(/^(l\d)_b(\d)$/);a.dataset.v=m.toFixed(3);a.textContent=m.toFixed(2);a.classList.toggle('bad',out(LINES.find(x=>x.id==mm[1]),+mm[2],m))}
-function meanB(L,s,b){const p=pid(L,s,b),v=[...Array(L.n)].map((_,k)=>num(p+'_c'+k)),m=v.reduce((a,c)=>a+c)/v.length,e=$('#'+p+'_mean');e.textContent=m.toFixed(2)}
-function reflag(){LINES.forEach(L=>SHIFTS.forEach(([s])=>{[1,2,3].forEach(b=>meanB(L,s,b));document.querySelectorAll('#'+L.id+'_b'+s+' td.a').forEach(a=>a.classList.toggle('bad',out(L,s,parseFloat(a.dataset.v))))}))}
-function syncFal(){document.querySelectorAll('.pt input[id$="_fa"]').forEach(i=>{const m=i.id.match(/^(l\d)s(\d)b/);if(m&&document.getElementById('fa'+m[2]+m[1]))i.placeholder=num('fa'+m[2]+m[1]).toFixed(2)});document.querySelectorAll('td.fal').forEach(c=>c.textContent=num('fa'+c.dataset.s+c.dataset.l).toFixed(2));document.querySelectorAll('td.avs').forEach(c=>{const lo=$('#amin'+c.dataset.s+c.dataset.l).value,hi=$('#amax'+c.dataset.s+c.dataset.l).value;c.textContent=lo!==''&&hi!==''?lo+'-'+hi:''})}
+$('#lines').innerHTML=SHIFTS.map(([s,r])=>`<section class="pg" id="sh${s}"><h2>Shift ${SN[s]} (${r})</h2><div class="grid">`+fld('date'+s,'Date',s===3?yestDMY():todayDMY(),'text','DD/MM/YYYY')+fld('var'+s,'Variation +/-',0.2,'number')+fld('tests'+s,'Test hours (Cl / Gly / TFM)',TD[s])+`</div>`+LINES.map(L=>`<p class="n"><b>${L.title.split(' - ')[0]}</b> settings</p><div class="grid">`+fld('chl'+s+L.id,'Cl base',L.cl[0],'number')+fld('chlv'+s+L.id,'Cl +/-',L.cl[1],'number')+fld('gly'+s+L.id,'Gly base',L.gl[0],'number')+fld('glyv'+s+L.id,'Gly +/-',L.gl[1],'number')+fld('tmp'+s+L.id,'Temp base',L.t.toFixed(1),'number')+fld('tmpv'+s+L.id,'Temp +/-',0.5,'number')+fld('amin'+s+L.id,'Avrg min',L.amin==null?'':L.amin,'number')+fld('amax'+s+L.id,'Avrg max',L.amax==null?'':L.amax,'number')+'</div>').join('')+`<div class="bar"><button data-gs="${s}">Regenerate this shift</button></div><h3>Sheet1 forms (Line 1, 2, 3 for hours 1-3, then again for 4-6 and 7-8)</h3>${[1,2,3].map(b=>`<div class="grp">${LINES.map(L=>form(L,s,b)).join('')}<div class="bar"><label style="flex-direction:row;align-items:center;gap:6px;color:var(--ink);font-size:14px">Image size <select class="isz" style="width:auto">${SZO}</select></label>${LINES.map(L=>`<button data-img="${L.id}s${s}b${b}">Share ${L.title.split(' - ')[0]} image</button><button class="s" data-imgp="${L.id}s${s}b${b}" title="Save ${L.title.split(' - ')[0]} as a PNG file">Save PNG</button>`).join('')}<button class="p" data-imgg="s${s}b${b}">Share all 3 image</button><button data-imgs="s${s}b${b}">Save all 3 as PNG</button><button data-done="1">done ✓</button><button data-sv>Save</button></div></div>`).join('')}<h3>Data</h3><div class="bar"><b>All 3 lines</b><button class="p" data-xla="${s}">Export all 3 lines to Excel (one sheet)</button></div>${LINES.map(L=>`<div class="bar"><b>${L.title}</b><button class="p" data-copy="${L.id}" data-s="${s}">Copy ${L.title.split(' - ')[0]} rows</button><button data-xl="${L.id}" data-s="${s}">Export to Excel</button><button data-sv>Save</button></div><div class="wrap"><table>${head(L)}<tbody id="${L.id}_b${s}"></tbody></table></div>`).join('')}<p class="n">Copy one line at a time and paste it into the matching sheet at column B of the next empty rows.</p></section>`).join('');
+function tf(tr){const c=[...tr.cells],g=i=>parseFloat(c[i].textContent),t=c[9];if(!t)return;if(isNaN(g(7))||isNaN(g(8))){t.textContent='';t.dataset.v='';return}const v=(100-[4,5,6,7,8].reduce((a,i)=>a+(g(i)||0),0)-2)/1.086;t.dataset.v=v.toFixed(3);t.textContent=v.toFixed(2)}
+const out=(L,s,m)=>{const eLo=document.getElementById('amin'+s+L.id),eHi=document.getElementById('amax'+s+L.id),lo=eLo?parseFloat(eLo.value):NaN,hi=eHi?parseFloat(eHi.value):NaN;return !isNaN(lo)&&!isNaN(hi)&&(m<lo||m>hi)};
+function avg(tr){tf(tr);const ws=[...tr.querySelectorAll('.w')],v=ws.map(c=>parseFloat(c.textContent)).filter(x=>!isNaN(x)),a=tr.querySelector('.a'),tb=tr.closest('tbody');if(!a||!tb)return;const mm=tb.id.match(/^(l\d)_b(\d)$/);if(!v.length){a.dataset.v='';a.textContent='';a.classList.remove('bad');return}const m=v.reduce((s,x)=>s+x,0)/v.length;a.dataset.v=m.toFixed(3);a.textContent=m.toFixed(2);a.classList.toggle('bad',out(LINES.find(x=>x.id==mm[1]),+mm[2],m))}
+function meanB(L,s,b){const p=pid(L,s,b),v=[...Array(L.n)].map((_,k)=>parseFloat(($('#'+p+'_c'+k)||{}).value)).filter(x=>!isNaN(x)),m=v.length?v.reduce((a,c)=>a+c,0)/v.length:null,e=$('#'+p+'_mean');if(e)e.textContent=m!==null?m.toFixed(2):''}
+function reflag(){LINES.forEach(L=>SHIFTS.forEach(([s])=>{[1,2,3].forEach(b=>meanB(L,s,b));document.querySelectorAll('#'+L.id+'_b'+s+' td.a').forEach(a=>a.classList.toggle('bad',a.dataset.v!==''&&out(L,s,parseFloat(a.dataset.v))))}))}
+function syncFal(){document.querySelectorAll('.pt input[id$="_fa"]').forEach(i=>{const m=i.id.match(/^(l\d)s(\d)b/);if(m){const L=LINES.find(x=>x.id==m[1]);if(L)i.placeholder=L.fa.toFixed(2)}});document.querySelectorAll('td.fal').forEach(c=>{const L=LINES.find(x=>x.id==c.dataset.l);if(L)c.textContent=L.fa.toFixed(2)});document.querySelectorAll('td.avs').forEach(c=>{const eLo=document.getElementById('amin'+c.dataset.s+c.dataset.l),eHi=document.getElementById('amax'+c.dataset.s+c.dataset.l),lo=eLo?eLo.value:'',hi=eHi?eHi.value:'';c.textContent=lo!==''&&hi!==''?lo+'-'+hi:''})}
 function sync(){syncFal();SHIFTS.forEach(([s])=>{const d=dtf($('#date'+s).value);LINES.forEach(L=>$('#'+L.id+'_b'+s).querySelectorAll('.d').forEach(c=>c.textContent=d))});reflag()}
-function setPB(L,s,b){const p=pid(L,s,b),[a,z]=BL[b-1],rows=$('#'+L.id+'_b'+s).rows;for(let i=a;i<z;i++)if(rows[i]){rows[i].querySelector('.pn').textContent=$('#'+p+'_p').value;rows[i].querySelector('.b').textContent=$('#'+pid(L,1,1)+'_bn').value}}
-function syncBatch(L,v){
- if(typeof v!=='string')v=undefined;   /* forEach passes the index - ignore it */
+function setPB(L,s,b){const p=pid(L,s,b),[a,z]=BL[b-1],rows=$('#'+L.id+'_b'+s).rows,bnVal=rv(p+'_bn')||rv(pid(L,s,1)+'_bn')||rv(pid(L,1,1)+'_bn')||L.b,pnVal=rv(p+'_p')||L.p;for(let i=a;i<z;i++)if(rows[i]){rows[i].querySelector('.pn').textContent=pnVal;rows[i].querySelector('.b').textContent=bnVal}}
+function setBatch(L,s,b,val){
+ val=String(val==null?'':val).trim();
+ if(b===1){
+  [1,2,3].forEach(bi=>{
+   const p=pid(L,s,bi),inp=document.getElementById(p+'_bn');
+   if(inp){inp.value=val;if(typeof markEdit==='function')markEdit(inp.id);}
+   setPB(L,s,bi);
+  });
+ }else{
+  const p=pid(L,s,b),inp=document.getElementById(p+'_bn');
+  if(inp){inp.value=val;if(typeof markEdit==='function')markEdit(inp.id);}
+  setPB(L,s,b);
+ }
+ if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();
+}
+function syncBatch(L,v,srcId){
+ if(typeof v!=='string')v=undefined;
  const first=$('#'+pid(L,1,1)+'_bn');
  if(v===undefined)v=first?first.value:L.b;
- /* the first batch number is the master: every form of that line shows it.
-    Line 2 keeps whatever is in the original sheet, so its number can be
-    changed by hand without the master overwriting it. */
- if(L.id!=='l2')document.querySelectorAll('input[id^="'+L.id+'s"][id$="_bn"]').forEach(x=>{if(x.value!==v)x.value=v});
- else document.querySelectorAll('input[id^="'+L.id+'s"][id$="_bn"]').forEach(x=>{if(!x.value)x.value=v});
+ if(!srcId||srcId===pid(L,1,1)+'_bn'){
+  SHIFTS.forEach(([s])=>setBatch(L,s,1,v));
+ }
  document.querySelectorAll('.bnm[data-l="'+L.id+'"]').forEach(x=>x.textContent=v);
  SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>{if($('#'+L.id+'_b'+s).rows.length)setPB(L,s,b)}));
+ if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();
 }
-function rowHtml(L,s,b,hr,T,v){const p=pid(L,s,b),e=x=>`<td contenteditable inputmode="decimal">${x}</td>`;
-return `<tr><td class="d"></td><td>${hr}</td><td class="pn"></td><td class="b"></td>`+e(rnd(num(p+'_m'),v,2).toFixed(2))+'<td contenteditable inputmode="decimal" class="qcell" data-set="'+p+'_ffa">'+(rv(p+'_ffa')||rv('ffa'+s+L.id)||'')+'</td>'+'<td contenteditable inputmode="decimal" class="qcell" data-set="'+p+'_fa">'+(rv(p+'_fa')||rv('faq'+s+L.id)||Math.max(0,rnd(num('fa'+s+L.id),num('fav'+s+L.id),2)).toFixed(2))+'</td>'+
-(T?e(rnd(num('chl'+s+L.id),num('chlv'+s+L.id),2).toFixed(2))+e(rnd(num('gly'+s+L.id),num('glyv'+s+L.id),2).toFixed(2)):'<td contenteditable inputmode="decimal"></td>'.repeat(2))+'<td class="t"></td>'+
-'<td contenteditable inputmode="decimal" class="qcell" data-set="tmp'+s+L.id+'">'+(rv('tmp'+s+L.id)||'')+'</td>'+[...Array(L.n)].map((_,k)=>`<td class="w" contenteditable inputmode="decimal">${rnd(num(p+'_c'+k),v,2).toFixed(2)}</td>`).join('')+'<td class="a"></td></tr>'}
-function genBlock(L,s,b,toForm){const H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],tests=new Set($('#tests'+s).value.split(/[,\s]+/).filter(Boolean).map(x=>x.padStart(5,'0'))),v=num('var'+s),tb=$('#'+L.id+'_b'+s);
-for(let i=a;i<z;i++){const t=document.createElement('tbody');t.innerHTML=rowHtml(L,s,b,H[i],tests.has(H[i]),v);const r=t.rows[0];if(tb.rows[i])tb.rows[i].replaceWith(r);else tb.append(r)}
-/* the new random weights also go into the form - otherwise the table is
-   overwritten again by refreshW() and the button looks like it does nothing */
-if(toForm)for(let k=0;k<L.n;k++){const c=tb.rows[a]&&tb.rows[a].cells[11+k];if(!c)continue;const inp=document.getElementById(pid(L,s,b)+'_c'+k);
-/* the weights the user typed (or that came from the cloud) are never overwritten */
-   if(inp&&inp.dataset.manual!=='1'){inp.value=c.textContent.trim();if(typeof markEdit==='function')markEdit(inp.id);if(typeof save==='function')save();if(typeof syncTouch==='function')syncTouch()}}
- refreshW();
-setPB(L,s,b);sync();for(let i=a;i<z;i++)avg(tb.rows[i],L);meanB(L,s,b)}
+function rowHtml(L,s,b,hr,T,v,isFirstHr){const p=pid(L,s,b),e=x=>`<td contenteditable inputmode="decimal">${x}</td>`;
+ const rawM=rv(p+'_m');
+ const baseM=parseFloat(rawM)||L.m;
+ const mStr=rawM===''?'':((isFirstHr)?(+baseM).toFixed(2):rnd(baseM,v,2).toFixed(2));
+ const ffaStr=rv(p+'_ffa');
+ const faStr=rv(p+'_fa');
+ const baseTmp=num('tmp'+s+L.id)||L.t;
+ const vTmp=num('tmpv'+s+L.id)||0.5;
+ const tmpStr=rnd(baseTmp,vTmp,1).toFixed(1);
+ return `<tr><td class="d"></td><td>${hr}</td><td class="pn"></td><td class="b"></td>`+'<td contenteditable inputmode="decimal" class="qcell" data-set="'+p+'_m">'+mStr+'</td>'+'<td contenteditable inputmode="decimal" class="qcell" data-set="'+p+'_ffa">'+ffaStr+'</td>'+'<td contenteditable inputmode="decimal" class="qcell" data-set="'+p+'_fa">'+faStr+'</td>'+
+ (T?e(rnd(num('chl'+s+L.id),num('chlv'+s+L.id),2).toFixed(2))+e(rnd(num('gly'+s+L.id),num('glyv'+s+L.id),2).toFixed(2)):'<td contenteditable inputmode="decimal"></td>'.repeat(2))+'<td class="t"></td>'+
+ '<td contenteditable inputmode="decimal">'+tmpStr+'</td>'+[...Array(L.n)].map((_,k)=>{
+  const wv=rv(p+'_c'+k);
+  if(wv==='')return `<td class="w wcell" data-w="${p}_c${k}" contenteditable inputmode="decimal"></td>`;
+  const bw=parseFloat(wv)||L.c[k];
+  const cellW=isFirstHr?fixW((+bw).toFixed(2)):fixW(rnd(bw,v,2).toFixed(2));
+  return `<td class="w wcell" data-w="${p}_c${k}" contenteditable inputmode="decimal">${cellW}</td>`;
+ }).join('')+'<td class="a"></td></tr>'}
+function syncBatchToRows(L,s,b){
+ var tb=document.getElementById(L.id+'_b'+s);if(!tb||!tb.rows.length)return;
+ var a=BL[b-1][0],z=BL[b-1][1],p=pid(L,s,b),v=num('var'+s)||0.2;
+ var pnVal=rv(p+'_p')||L.p;
+ var bnVal=rv(p+'_bn')||rv(pid(L,s,1)+'_bn')||rv(pid(L,1,1)+'_bn')||L.b;
+ var rawM=rv(p+'_m'),bm=parseFloat(rawM);
+ var ffaVal=rv(p+'_ffa');
+ var faVal=rv(p+'_fa');
+ var weights=[...Array(L.n)].map((_,k)=>rv(p+'_c'+k));
+ for(var r=a;r<z;r++){
+  var row=tb.rows[r];if(!row)continue;
+  var pnEl=row.querySelector('.pn'),bEl=row.querySelector('.b');
+  if(pnEl)pnEl.textContent=pnVal;
+  if(bEl)bEl.textContent=bnVal;
+  var cM=row.cells[4];
+  if(cM&&document.activeElement!==cM){
+   cM.classList.add('qcell');cM.dataset.set=p+'_m';
+   if(rawM===''||isNaN(bm))cM.textContent='';
+   else cM.textContent=(r===a)?(+bm).toFixed(2):rnd(bm,v,2).toFixed(2);
+  }
+  var cFfa=row.cells[5];
+  if(cFfa&&document.activeElement!==cFfa){cFfa.classList.add('qcell');cFfa.dataset.set=p+'_ffa';cFfa.textContent=ffaVal;}
+  var cFa=row.cells[6];
+  if(cFa&&document.activeElement!==cFa){cFa.classList.add('qcell');cFa.dataset.set=p+'_fa';cFa.textContent=faVal;}
+  for(var k=0;k<L.n;k++){
+   var cell=row.cells[11+k];if(!cell)continue;
+   cell.dataset.w=p+'_c'+k;cell.classList.add('wcell');
+   if(document.activeElement===cell)continue;
+   var wk=weights[k],bw=parseFloat(wk);
+   if(wk===''||isNaN(bw))cell.textContent='';
+   else if(r===a)cell.textContent=fixW((+bw).toFixed(2));
+   else cell.textContent=fixW(rnd(bw,v,2).toFixed(2));
+  }
+  try{if(row.querySelector('.a'))avg(row)}catch(e){}
+ }
+ meanB(L,s,b);
+}
+function genBlock(L,s,b,toForm){
+ const H=hrs(SHIFTS[s-1][2]),[a,z]=BL[b-1],tests=new Set($('#tests'+s).value.split(/[,\s]+/).filter(Boolean).map(x=>x.padStart(5,'0'))),v=num('var'+s)||0.2,tb=$('#'+L.id+'_b'+s),p=pid(L,s,b);
+ if(toForm){
+  for(let k=0;k<L.n;k++){
+   const inp=document.getElementById(p+'_c'+k);
+   if(inp){
+    const nw=fixW(rnd(L.c[k],v,2).toFixed(2));
+    inp.value=nw;delete inp.dataset.manual;
+    if(typeof markEdit==='function')markEdit(inp.id);
+    if(typeof window.markEntrySaved==='function')window.markEntrySaved(inp.id,nw);
+   }
+  }
+  const mInp=document.getElementById(p+'_m');
+  if(mInp){
+   const nm=rnd(L.m,v,2).toFixed(2);
+   mInp.value=nm;
+   if(typeof markEdit==='function')markEdit(mInp.id);
+   if(typeof window.markEntrySaved==='function')window.markEntrySaved(mInp.id,nm);
+  }
+ }
+ for(let i=a;i<z;i++){const t=document.createElement('tbody');t.innerHTML=rowHtml(L,s,b,H[i],tests.has(H[i]),v,i===a);const r=t.rows[0];if(tb.rows[i])tb.rows[i].replaceWith(r);else tb.append(r)}
+ setPB(L,s,b);sync();for(let i=a;i<z;i++)if(tb.rows[i])avg(tb.rows[i]);meanB(L,s,b);
+ if(toForm){
+  if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();
+  if(typeof save==='function')save();
+  if(typeof syncTouch==='function')syncTouch();
+ }
+}
 function gen(L,toForm){SHIFTS.forEach(([s])=>[1,2,3].forEach(b=>genBlock(L,s,b,toForm)))}
 function tsv(L,s){const r0=parseInt($('#'+L.id+'_r').value),last=String.fromCharCode(76+L.n);
 return [...$('#'+L.id+'_b'+s).rows].map((tr,k)=>[...tr.cells].map((c,j,a)=>j==a.length-1?(r0?`=AVERAGE(M${r0+k+8*(s-1)}:${last}${r0+k+8*(s-1)})`:c.dataset.v):j==9?(c.dataset.v?(r0?`=((100-SUM(F${r0+k+8*(s-1)}:J${r0+k+8*(s-1)})-2)/1.086)`:c.dataset.v):''):c.textContent.trim()).join('\t')).join('\n')}
 async function copy(t,btn){try{await navigator.clipboard.writeText(t)}catch(_){const a=document.createElement('textarea');a.value=t;document.body.append(a);a.select();document.execCommand('copy');a.remove()}
 const o=btn.textContent;btn.textContent='Copied';setTimeout(()=>btn.textContent=o,1400)}
 document.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;
-if(b.id=='all'){if(confirm('Regenerate the weights of ALL the shifts.\n\nThe weights you typed just now stay as they are.\nThe other ones (including the ones already saved in the cloud) get new random values and are saved again.\n\nContinue?'))LINES.forEach(L=>gen(L,true));}
-else if(b.dataset.gen)gen(LINES.find(L=>L.id==b.dataset.gen),true);
+if(b.id=='all'){LINES.forEach(L=>gen(L,true));pToast('تم توليد أوزان وحرارة عشوائية لجميع الشيفتات ✓',true);}
+else if(b.dataset.gen){gen(LINES.find(L=>L.id==b.dataset.gen),true);pToast('تم تحديث الخط ✓',true);}
 else if(b.dataset.copy)copy(tsv(LINES.find(L=>L.id==b.dataset.copy),b.dataset.s),b)});
 document.addEventListener('focusout',ev=>{const t=ev.target;
  if(t.matches&&t.matches('td.qcell')){const id=t.dataset.set,inp=id&&document.getElementById(id);
-   if(inp){const v=String(t.textContent||'').trim();if(inp.value!==v){inp.value=v;markEdit(inp.id);later();}}return;}
+   if(inp){const v=String(t.textContent||'').trim();if(inp.value!==v){inp.value=v;markEdit(inp.id);const mq=id.match(/^(l\d)s(\d)b(\d)_/);if(mq){const LQ=LINES.find(x=>x.id==mq[1]);if(LQ)syncBatchToRows(LQ,+mq[2],+mq[3]);}if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();later();}}return;}
  if(t.matches&&t.matches('td.w[contenteditable]')){
+  const cur=String(t.textContent||'').trim(),nv=fixW(cur);
+  if(nv!==cur)t.textContent=nv;
   var idw=t.dataset.w,inpw=idw&&document.getElementById(idw);
-  if(inpw){var vw=String(t.textContent||'').trim();if(inpw.value!==vw){inpw.value=vw;markEdit(inpw.id);later();}}
-  return;}
- if(!t.matches||!t.matches('td.w[contenteditable]'))return;const cur=String(t.textContent||'').trim(),nv=fixW(cur);if(nv!==cur){t.textContent=nv;t.dispatchEvent(new Event('input',{bubbles:true}))}});
+  if(inpw){if(inpw.value!==nv){inpw.value=nv;markEdit(inpw.id);const mw=idw.match(/^(l\d)s(\d)b(\d)_/);if(mw){const LW=LINES.find(x=>x.id==mw[1]);if(LW){meanB(LW,+mw[2],+mw[3]);syncBatchToRows(LW,+mw[2],+mw[3]);}}if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();later();}}
+  const tr=t.closest('tr');if(tr)avg(tr);
+  return;}});
 document.addEventListener('input',ev=>{const t=ev.target;
-if(t.tagName=='INPUT'){markEdit(t.id);if(/^(moi|faq|ffa)\d+l\d$/.test(t.id)||/^l\ds\db\d_(m|fa|ffa)$/.test(t.id)){refreshQC();return}
-  if(/^l\ds\db\d_c\d+$/.test(t.id)){t.dataset.manual='1';const mw=t.id.match(/^(l\d)s(\d)b(\d)_/),LW=mw&&LINES.find(x=>x.id==mw[1]);if(LW)meanB(LW,+mw[2],+mw[3]);refreshW();if(typeof syncTouch==='function')syncTouch();return}const dm=t.id.match(/^date(\d)$/);if(dm){DOVR[dm[1]]=t.value;t.dataset.touched='1';sync();return}const m=t.id.match(/^(l\d)s(\d)b(\d)_/);if(m){const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);if(/_bn$/.test(t.id))syncBatch(L,t.value);else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3])}else sync();return}
+if(t.tagName=='INPUT'){
+ markEdit(t.id);
+ const mb=t.id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|ffa|bn|p)$/);
+ if(mb){
+  const L=LINES.find(x=>x.id===mb[1]),s=+mb[2],b=+mb[3],fldName=mb[4];
+  if(fldName==='bn'){
+   setBatch(L,s,b,t.value);
+  }else if(/^c\d+$/.test(fldName)){
+   t.dataset.manual='1';
+   syncBatchToRows(L,s,b);
+  }else if(/^(m|fa|ffa)$/.test(fldName)){
+   syncBatchToRows(L,s,b);
+  }else if(fldName==='p'){
+   setPB(L,s,b);
+  }
+  if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();
+  if(typeof syncTouch==='function')syncTouch();
+  return;
+ }
+ const dm=t.id.match(/^date(\d)$/);
+ if(dm){DOVR[dm[1]]=t.value;t.dataset.touched='1';sync();return}
+ if(/^tmp\d*l\d$/.test(t.id)){refreshQC();if(typeof syncTouch==='function')syncTouch();return}
+ const m=t.id.match(/^(l\d)s(\d)b(\d)_/);
+ if(m){
+  const L=LINES.find(L=>L.id==m[1]);meanB(L,+m[2],+m[3]);
+  if(/_bn$/.test(t.id))syncBatch(L,t.value,t.id);
+  else if(/_p$/.test(t.id))setPB(L,+m[2],+m[3]);
+  if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();
+ }else sync();
+ return;
+}
 const tr=t.closest('tr');if(tr&&t.closest('.wrap tbody'))avg(tr)});
-document.addEventListener('change',ev=>{const m=ev.target.id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|ffa|t)$/);if(m)genBlock(LINES.find(L=>L.id==m[1]),+m[2],+m[3])});
+document.addEventListener('change',ev=>{
+ const id=ev.target.id||'';
+ const m=id.match(/^(l\d)s(\d)b(\d)_(c\d+|m|fa|ffa|t|bn|p)$/);
+ if(m){
+  const L=LINES.find(x=>x.id==m[1]),s=+m[2],b=+m[3];
+  if(m[4]==='bn'){setBatch(L,s,b,ev.target.value);}
+  else if(/^c\d+$/.test(m[4])){const fx=fixW(ev.target.value);if(fx!==ev.target.value)ev.target.value=fx;syncBatchToRows(L,s,b);}
+  else syncBatchToRows(L,s,b);
+  if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();
+  return;
+ }
+ const ms=id.match(/^(chl|chlv|gly|glyv|tmp|tmpv)(\d)(l\d)$/);
+ if(ms){const L=LINES.find(x=>x.id==ms[3]),s=+ms[2];if(L)[1,2,3].forEach(b=>genBlock(L,s,b,false));return;}
+ const mv=id.match(/^(var|tests)(\d)$/);
+ if(mv){const s=+mv[2];LINES.forEach(L=>[1,2,3].forEach(b=>genBlock(L,s,b,false)));return;}
+});
 const ed=tr=>[...tr.querySelectorAll('td[contenteditable],input')];
 function pick(c){c.focus();if(c.select)c.select();else{const r=document.createRange(),g=getSelection();r.selectNodeContents(c);g.removeAllRanges();g.addRange(r)}}
 function go(el,dr,dc){const tr=el.closest('tr'),rows=tr.closest('.pt')?[...tr.closest('table').rows].filter(r=>ed(r).length):[...tr.closest('section').querySelectorAll('.wrap tbody tr')],ri=rows.indexOf(tr),cur=ed(tr);let nr=ri+dr,nc=cur.indexOf(el)+dc;
@@ -276,7 +406,7 @@ async function diag(){
  out.push('قيم التحاليل الموجودة في الذاكرة:');
  for(i=0;i<LINES.length;i++){var L=LINES[i];
   for(var j=0;j<SHIFTS.length;j++){var s=SHIFTS[j][0];
-   out.push('  خط '+L.ln+' / شِفت '+SN[s]+' : moisture='+(rv('moi'+s+L.id)||'(فاضي)')+'  FA='+(rv('faq'+s+L.id)||'(فاضي)')+'  FFA='+(rv('ffa'+s+L.id)||'(فاضي)'));
+   out.push('  خط '+L.id.slice(1)+' / شِفت '+SN[s]+' : moisture='+(rv(L.id+'s'+s+'b1_m')||'(فاضي)')+'  FA='+(rv(L.id+'s'+s+'b1_fa')||'(فاضي)')+'  FFA='+(rv(L.id+'s'+s+'b1_ffa')||'(فاضي)'));
   }}
  out.push('');
  try{var cfg=syncCfg();var p=await syncRead(cfg);
@@ -304,47 +434,19 @@ function beep(ok){try{const c=ac();if(!c)return;const o=c.createOscillator(),g=c
  if(navigator.vibrate)navigator.vibrate(ok?[45,60,45]:[220,90,220]);}catch(e){}}
 function refreshW(){
  LINES.forEach(L=>SHIFTS.forEach(([s])=>{
-  var tb=document.getElementById(L.id+'_b'+s);if(!tb)return;
-  for(var r=0;r<tb.rows.length;r++){
-   var row=tb.rows[r],b=0;
-   for(var q=0;q<BL.length;q++){if(r>=BL[q][0]&&r<BL[q][1]){b=q+1;break;}}
-   if(!b)continue;
-   for(var k=0;k<L.n;k++){
-    var cell=row.cells[11+k];if(!cell)continue;
-    var id=L.id+'s'+s+'b'+b+'_c'+k;
-    cell.dataset.w=id;cell.classList.add('wcell');
-    var inp=document.getElementById(id);
-    if(inp&&document.activeElement!==cell)cell.textContent=inp.value;  /* an empty weight must clear the cell too */
-   }
-   /* the weights were written straight into the cells, so the row's Avrg weight, TFM and the amber flag must be recalculated */
-   try{if(row.querySelector('.a'))avg(row)}catch(e){}
-  }
+  [1,2,3].forEach(b=>syncBatchToRows(L,s,b));
  }));
 }
 function refreshQC(){
  LINES.forEach(L=>SHIFTS.forEach(([s])=>{
   var t=document.getElementById(L.id+'_b'+s);if(!t)return;
+  var baseTmp=num('tmp'+s+L.id)||L.t,vTmp=num('tmpv'+s+L.id)||0.5;
   for(var r=0;r<t.rows.length;r++){
-   var row=t.rows[r],b=0;
-   for(var q=0;q<BL.length;q++){if(r>=BL[q][0]&&r<BL[q][1]){b=q+1;break;}}
-   /* the cells are found by their column, not by a class: the table saved in the
-      cloud may still be an old copy without the class */
-   var put=function(idx,id,fb){var c=row.cells[idx];if(!c)return;
-    var inp=document.getElementById(id);
-    c.classList.add('qcell');c.dataset.set=id;
-    var v=inp&&inp.value!==''?inp.value:(fb||'');
-    if(v!==''&&document.activeElement!==c)c.textContent=v;};
-   if(b){
-    var p=L.id+'s'+s+'b'+b;
-    /* M/C, FFA and FA are entered per batch in the Sheet1 form, like the weights */
-    var mc=document.getElementById(p+'_m'),cm=row.cells[4];
-    if(cm&&mc&&mc.value!==''&&mc.value!==L.m.toFixed(2)&&document.activeElement!==cm)cm.textContent=mc.value;
-    put(5,p+'_ffa',rv('ffa'+s+L.id));   /* FFA - the measured value of the shift settings if the batch is empty */
-    put(6,p+'_fa',rv('faq'+s+L.id));    /* FA  - the same */
-   }
-   put(10,'tmp'+s+L.id);   /* Temp - the temperature of that line, like the paper sheet */
-   try{if(row.querySelector('.a'))avg(row)}catch(e){}   /* TFM + Avrg + flag follow the new values */
+   var row=t.rows[r];
+   var cTmp=row.cells[10];
+   if(cTmp&&cTmp.textContent.trim()===''){cTmp.textContent=rnd(baseTmp,vTmp,1).toFixed(1);}
   }
+  [1,2,3].forEach(b=>syncBatchToRows(L,s,b));
  }));
 }
 function snap(){const d={v:{},t:{}};document.querySelectorAll('input[id]').forEach(i=>{if(i.type!='checkbox'&&i.type!='file')d.v[i.id]=i.value});document.querySelectorAll('tbody[id]').forEach(b=>d.t[b.id]=b.innerHTML);return d}
@@ -365,13 +467,13 @@ if(b.id=='pullBtn'){ac();b.disabled=true;b.textContent='جاري السحب...';
  syncPull().then(()=>{refreshQC();stamp('تم سحب القيم من الـ cloud');pToast('تم سحب القيم من الـ cloud',true);beep(true);})
  .catch(e=>{stamp('فشل السحب: '+(e&&e.message?e.message:e));pToast('فشل السحب',false);beep(false);})
  .finally(()=>{b.disabled=false;b.textContent='⟳ سحب القيم';});return;}
-if(b.id=='sv')save();
-else if(b.id=='ex'){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snap())],{type:'application/json'}));a.download='soap_log_backup_'+today+'.json';a.click()}
+if(b.id=='sv'){if(typeof window.commitEntryToApp==='function')window.commitEntryToApp();save();pToast('تم حفظ جميع البيانات ✓',true);}
+else if(b.id=='ex'){if(typeof window.commitEntryToApp==='function')window.commitEntryToApp();const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(snap())],{type:'application/json'}));a.download='soap_log_backup_'+today+'.json';a.click()}
 else if(b.id=='cc'){b.textContent='Clearing...';try{if(window.caches)caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k))))}catch(e){}try{if(navigator.serviceWorker)navigator.serviceWorker.getRegistrations().then(rs=>Promise.all(rs.map(r=>r.unregister())))}catch(e){}setTimeout(function(){location.reload()},700)}
-else if(b.id=='rs'&&confirm('Delete all saved data and reset the page?')){skip=true;try{['soapLogV3','soapLogV3_royal','soapLogV3_lemon','soapLogV2','soapLogV2_royal','soapLogV1'].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}});
-$('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));save();stamp('Backup imported')}catch(_){stamp('Invalid backup file')}};r.readAsText(f)});
-function showPg(id){document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));scrollTo(0,0);store('soapLogPg',id)}
-document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;if(confirm('Regenerate the weights of Shift '+SN[s]+'.\n\nThe weights you typed just now stay as they are.\nThe other ones (including the ones already saved in the cloud) get new random values and are saved again.\n\nContinue?'))LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k,true)))}});
+else if(b.id=='rs'){if(!b.dataset.armed){b.dataset.armed='1';const o=b.textContent;b.textContent='Tap again to confirm reset';setTimeout(()=>{delete b.dataset.armed;b.textContent=o},3000);return}skip=true;try{['soapLogV3','soapLogV3_royal','soapLogV3_lemon','soapLogV2','soapLogV2_royal','soapLogV1','soaplog_entry_saved'].forEach(k=>localStorage.removeItem(k))}catch(e){}location.reload()}});
+$('#imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{apply(JSON.parse(r.result));if(typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();save();stamp('Backup imported')}catch(_){stamp('Invalid backup file')}};r.readAsText(f)});
+function showPg(id){if(typeof window.commitEntryToApp==='function')window.commitEntryToApp();document.querySelectorAll('section.pg').forEach(x=>x.classList.toggle('on',x.id==id));document.querySelectorAll('nav a[data-pg]').forEach(a=>a.classList.toggle('on',a.dataset.pg==id));if(id==='ent'&&typeof window.syncEntryFromApp==='function')window.syncEntryFromApp();scrollTo(0,0);store('soapLogPg',id)}
+document.addEventListener('click',ev=>{const a=ev.target.closest('a[data-pg]');if(a){ev.preventDefault();showPg(a.dataset.pg);return}const b=ev.target.closest('button');if(b&&b.dataset.gs){const s=+b.dataset.gs;LINES.forEach(L=>[1,2,3].forEach(k=>genBlock(L,s,k,true)));pToast('تم توليد قيم عشوائية جديدة لشيفت '+SN[s]+' ✓',true);}});
 const pg0=fetchS('soapLogPg'),pe=pg0&&document.getElementById(pg0);showPg(pe&&pe.classList.contains('pg')?pg0:'ent');
 const avsTxt=(L,s)=>{const lo=$('#amin'+s+L.id).value,hi=$('#amax'+s+L.id).value;return lo!==''&&hi!==''?lo+'-'+hi:''};
 const SPEC=['14-16','1.5 Max','0.05 Max','0.8 Max','5-7','MIN 69','42-44'];
@@ -382,7 +484,7 @@ const cell=(x,y,w,t,o)=>{o=o||{};if(o.fill){g.fillStyle=o.fill;g.fillRect(x+.5,y
 items.forEach((it,k)=>{const L=it.L,p=pid(L,it.s,it.b),n=L.n,y=k*3*rh,v=id=>$('#'+id).value;let x=0;
 ['Product Name','Batch No.','M/C','FFA','FAL'].forEach((t,i)=>{cell(x,y,fw[i],t,{b:1});x+=fw[i]});cell(x,y,n*pw,'NET Weight  '+L.gm+' GM',{b:1});x+=n*pw;cell(x,y,av,'Avrg',{b:1});
 x=0;['Line '+L.id.slice(1),'','(14-16)','','0.05 Max'].forEach((t,i)=>{cell(x,y+rh,fw[i],t,{fill:L.hc,b:1});x+=fw[i]});for(let i=1;i<=n;i++){cell(x,y+rh,pw,i,{fill:L.hc,b:1});x+=pw}cell(x,y+rh,av,avsTxt(L,it.s),{fill:L.hc,b:1});
-x=0;const ws=[...Array(n)].map((_,j)=>(+v(p+'_c'+j)).toFixed(2));[v(p+'_p'),v(p+'_bn'),(+v(p+'_m')||L.m).toFixed(2),(v(p+'_ffa')||rv('ffa'+it.s+L.id)||''),(v(p+'_fa')||rv('faq'+it.s+L.id)||num('fa'+it.s+L.id).toFixed(2))].forEach((t,i)=>{cell(x,y+2*rh,fw[i],t);x+=fw[i]});ws.forEach(t=>{cell(x,y+2*rh,pw,t);x+=pw});cell(x,y+2*rh,av,(ws.reduce((a,c)=>a+ +c,0)/n).toFixed(2),{b:1})});return cv}
+x=0;const rawWs=[...Array(n)].map((_,j)=>v(p+'_c'+j).trim()),ws=rawWs.map(w=>w!==''&&!isNaN(+w)?(+w).toFixed(2):''),validWs=ws.filter(Boolean).map(Number),mVal=v(p+'_m').trim();[v(p+'_p'),v(p+'_bn'),mVal!==''&&!isNaN(+mVal)?(+mVal).toFixed(2):'',v(p+'_ffa').trim(),v(p+'_fa').trim()].forEach((t,i)=>{cell(x,y+2*rh,fw[i],t);x+=fw[i]});ws.forEach(t=>{cell(x,y+2*rh,pw,t);x+=pw});cell(x,y+2*rh,av,validWs.length?(validWs.reduce((a,c)=>a+c,0)/validWs.length).toFixed(2):'',{b:1})});return cv}
 function imgName(items){
  const _lt=items[0].L.title.split(' - '),_ln=(_lt[1]||_lt[0]).replace(/[^A-Za-z0-9]/g,''),_sn=SN[items[0].s]||items[0].s;
  return (items.length>1?'Sheet1_All3_Shift'+_sn:_ln+'_Shift'+_sn+'_b'+items[0].b)+'.png';
@@ -474,7 +576,7 @@ else if(b.dataset.xl){xls(LINES.find(L=>L.id==b.dataset.xl),+b.dataset.s);flash(
 else if(b.dataset.xla){xlsAll(+b.dataset.xla);flash(b,'Exported')}
 else if(b.dataset.done){doneEdit()}
 else if(b.dataset.nav!==undefined){const d=b.dataset.nav.split(',').map(Number);if(lastEl)go(lastEl,d[0],d[1])}
-else if(b.hasAttribute('data-sv'))save()});
+else if(b.hasAttribute('data-sv')){if(typeof window.commitEntryToApp==='function')window.commitEntryToApp();save();pToast('تم الحفظ ✓',true)}});
 const zoomTo=v=>document.documentElement.style.setProperty('--z',v/100),svz=fetchS('soapLogImg');if(svz)document.querySelectorAll('.isz').forEach(x=>x.value=svz);zoomTo(svz||100);
 document.addEventListener('change',ev=>{if(ev.target.classList&&ev.target.classList.contains('isz')){const v=ev.target.value;document.querySelectorAll('.isz').forEach(x=>x.value=v);store('soapLogImg',v);zoomTo(v)}});
 let lastEl=null;
@@ -958,29 +1060,37 @@ function htmlTableToXlsx(html,sheetName){
 }
 </script>
 <script>
-/* ---------------- Entry page (merged): writes straight into the app's own fields ---------------- */
+/* ---------------- Entry page (merged): real-time two-way sync with Sheet1 & Data tables ---------------- */
 (function(){
 'use strict';
 var $e=function(s){return document.querySelector('#ent '+s)},$$e=function(s){return Array.prototype.slice.call(document.querySelectorAll('#ent '+s))},gi=function(id){return document.getElementById(id)};
-var saved={},forced=false,dirty=false,pend=[];
+var saved={},dirty=false,pend=[],syncingEntry=false;
 try{saved=JSON.parse(localStorage.getItem('soaplog_entry_saved')||'{}')||{}}catch(e){}
 function persist(){try{localStorage.setItem('soaplog_entry_saved',JSON.stringify(saved))}catch(e){}}
+window.markEntrySaved=function(id,val){if(id){saved[id]=val;persist()}};
 function fix(v){v=String(v==null?'':v).trim();if(/^-?\d+\.\d$/.test(v))return v+'1';if(/^-?\d+$/.test(v))return v+'.01';return v}
 function nv(v){var s=String(v==null?'':v).trim();return (s!==''&&isFinite(+s))?s:''}
 function wId(L,s,b,i){return L.id+'s'+s+'b'+b+'_c'+i}
 function bnId(L,s,b){return L.id+'s'+s+'b'+b+'_bn'}
-function qId(k,s,L){return k+s+L.id}
 function defW(L,i){return L.c[i].toFixed(2)}
 function defM(L){return L.m.toFixed(2)}
 function pId(L,s,b,k){return L.id+'s'+s+'b'+b+'_'+k}
 function cur(id){var e=gi(id);return e?e.value:''}
 function sh(){return +$e('#e_sh').value}
 function bt(){return +$e('#e_bt').value}
-function shownW(L,s,b,i){var id=wId(L,s,b,i),v=cur(id);return (v!==''&&(v!==defW(L,i)||saved[id]===v))?v:''}
+function shownW(L,s,b,i){var id=wId(L,s,b,i),v=cur(id);return v!==''?v:''}
 function sndOn(){try{return localStorage.getItem('qe_sound')!=='0'}catch(e){return true}}
 function ebeep(ok){if(sndOn()){try{beep(ok)}catch(e){}}}
-function say(txt,cls){var m=$e('#e_msg');m.className='msg '+cls;m.textContent=txt;if(cls==='ok')setTimeout(function(){m.className='msg'},6000)}
-function setApp(id,val){var e=gi(id);if(!e)return false;e.value=val;e.dispatchEvent(new Event('input',{bubbles:true}));return true}
+function say(txt,cls){var m=$e('#e_msg');if(!m)return;m.className='msg '+cls;m.textContent=txt;if(cls==='ok')setTimeout(function(){m.className='msg'},6000)}
+function setApp(id,val){
+ var e=gi(id);if(!e)return false;
+ if(e.value!==val){
+  e.value=val;
+  if(typeof markEdit==='function')markEdit(id);
+  e.dispatchEvent(new Event('input',{bubbles:true}));
+ }
+ return true;
+}
 
 function build(){
  var s=sh(),b=bt();
@@ -995,19 +1105,84 @@ function build(){
  fill();bind();calc();dirty=false;
 }
 function fill(){
+ if(syncingEntry)return;
  var s=sh(),b=bt();
  LINES.forEach(function(L){
-  $$e('.w[data-l="'+L.id+'"]').forEach(function(el){el.value=shownW(L,s,b,+el.dataset.i);el.classList.remove('fixed')});
+  $$e('.w[data-l="'+L.id+'"]').forEach(function(el){
+   if(document.activeElement!==el){el.value=shownW(L,s,b,+el.dataset.i);el.classList.remove('fixed')}
+  });
   var em=$e('.moi[data-l="'+L.id+'"]'),idm=pId(L,s,b,'m'),vm=cur(idm);
-  if(em)em.value=(vm!==''&&(vm!==defM(L)||saved[idm]===vm))?vm:'';
-  var ef=$e('.faq[data-l="'+L.id+'"]');if(ef)ef.value=nv(cur(pId(L,s,b,'fa')));
-  var ei=$e('.ffa[data-l="'+L.id+'"]');if(ei)ei.value=nv(cur(pId(L,s,b,'ffa')));
-  var bn=$e('.bn[data-l="'+L.id+'"]');if(bn)bn.value=cur(bnId(L,s,b));
+  if(em&&document.activeElement!==em)em.value=vm||'';
+  var ef=$e('.faq[data-l="'+L.id+'"]'),vfa=nv(cur(pId(L,s,b,'fa')));
+  if(ef&&document.activeElement!==ef)ef.value=vfa;
+  var ei=$e('.ffa[data-l="'+L.id+'"]'),vffa=nv(cur(pId(L,s,b,'ffa')));
+  if(ei&&document.activeElement!==ei)ei.value=vffa;
+  var bn=$e('.bn[data-l="'+L.id+'"]');
+  if(bn&&document.activeElement!==bn){
+   bn.value=cur(bnId(L,s,b))||cur(bnId(L,s,1))||cur(bnId(L,1,1));
+  }
  });
 }
+window.syncEntryFromApp=function(){if(!syncingEntry){fill();calc()}};
+
+function pushFieldToApp(el){
+ syncingEntry=true;
+ try{
+  var s=sh(),b=bt(),lid=el.dataset.l,L=LINES.find(function(x){return x.id===lid});
+  if(!L)return;
+  var v=el.value.trim();
+  if(el.classList.contains('w')){
+   var idx=+el.dataset.i,id=wId(L,s,b,idx);
+   setApp(id,v);saved[id]=v;
+   syncBatchToRows(L,s,b);
+  }else if(el.classList.contains('moi')){
+   var idm=pId(L,s,b,'m');
+   setApp(idm,v);saved[idm]=v;
+   syncBatchToRows(L,s,b);
+  }else if(el.classList.contains('faq')){
+   setApp(pId(L,s,b,'fa'),v);
+   syncBatchToRows(L,s,b);
+  }else if(el.classList.contains('ffa')){
+   setApp(pId(L,s,b,'ffa'),v);
+   syncBatchToRows(L,s,b);
+  }else if(el.classList.contains('bn')){
+   if(b===1)setBatch(L,s,1,v);
+   else setBatch(L,s,b,v);
+  }
+  persist();
+  if(typeof later==='function')later();
+ }finally{syncingEntry=false}
+}
+
+window.commitEntryToApp=function(){
+ syncingEntry=true;
+ try{
+  var s=sh(),b=bt();
+  LINES.forEach(function(L){
+   $$e('.w[data-l="'+L.id+'"]').forEach(function(el){
+    var raw=el.value.trim();
+    if(raw&&/^-?\d+(\.\d+)?$/.test(raw)){var fx=fix(raw);if(fx!==raw){el.value=fx;raw=fx}}
+    var id=wId(L,s,b,+el.dataset.i);
+    setApp(id,raw);saved[id]=raw;
+   });
+   var em=$e('.moi[data-l="'+L.id+'"]');
+   if(em){var idm=pId(L,s,b,'m'),vm=em.value.trim();setApp(idm,vm);saved[idm]=vm;}
+   var ef=$e('.faq[data-l="'+L.id+'"]');
+   if(ef)setApp(pId(L,s,b,'fa'),ef.value.trim());
+   var ei=$e('.ffa[data-l="'+L.id+'"]');
+   if(ei)setApp(pId(L,s,b,'ffa'),ei.value.trim());
+   var bn=$e('.bn[data-l="'+L.id+'"]');
+   if(bn&&bn.value.trim()!==''){
+    if(b===1)setBatch(L,s,1,bn.value.trim());
+    else setBatch(L,s,b,bn.value.trim());
+   }
+   syncBatchToRows(L,s,b);
+  });
+  persist();
+ }finally{syncingEntry=false}
+};
+
 var tapCtrl=false;
-/* when the finger goes down on a button the phone does not always move the focus
-   to it - without this the auto advance stole the focus and the tap never fired */
 document.addEventListener('pointerdown',function(ev){
  var t=ev.target;
  tapCtrl=!!(t&&t.closest&&t.closest('button,select,textarea,label,a[href]'));
@@ -1028,8 +1203,13 @@ function bind(){
   setTimeout(function(){noAdv=false},80);
  }
  $$e('.w').forEach(function(x){
-  x.addEventListener('blur',function(){var v=x.value.trim();if(v&&/^-?\d+(\.\d+)?$/.test(v)){var f=fix(v);if(f!==v){x.value=f;x.classList.add('fixed');calc()}}});
-  /* after a weight is recorded the cursor goes down to the next box */
+  x.addEventListener('blur',function(){
+   var v=x.value.trim();
+   if(v&&/^-?\d+(\.\d+)?$/.test(v)){
+    var f=fix(v);
+    if(f!==v){x.value=f;x.classList.add('fixed');calc();pushFieldToApp(x)}
+   }
+  });
   x.addEventListener('focusout',function(ev){
    if(x.value.trim()===''||noAdv)return;
    var rt=ev.relatedTarget;
@@ -1038,7 +1218,7 @@ function bind(){
     if(noAdv)return;
     var ae=document.activeElement;
     if(ae&&ae.nodeType===1&&((ae.classList&&ae.classList.contains('w'))||/^(BUTTON|SELECT|INPUT|TEXTAREA)$/.test(ae.tagName)))return;
-    if(tapCtrl)return;   /* the finger is on a button - do not steal the focus from it */
+    if(tapCtrl)return;
     goNext(x);
    },30);
   });
@@ -1049,7 +1229,7 @@ function bind(){
   });
  });
  $$e('.w,.moi,.faq,.ffa,.bn').forEach(function(x){
-  x.addEventListener('input',function(){dirty=true;calc()});
+  x.addEventListener('input',function(){dirty=true;calc();pushFieldToApp(x)});
   x.addEventListener('focus',function(){try{if(x.value)x.select()}catch(e){}});
   x.addEventListener('click',function(){setTimeout(function(){try{if(x.value)x.select()}catch(e){}},0)});
  });
@@ -1067,23 +1247,21 @@ function calc(){
   if(miss.length)all.push(L.title.split(' - ')[0]+' is missing '+miss.length+' weights (no. '+miss.join(', ')+')');
  });
  var aw=$e('#e_allwarn');
- if(all.length){aw.className='msg wn';aw.textContent='⚠️ '+all.join(' — ')+' — fill them all before saving'}else{aw.className='msg';aw.textContent=''}
+ if(all.length){aw.className='msg wn';aw.textContent='⚠️ '+all.join(' — ')}else{aw.className='msg';aw.textContent=''}
  return all;
 }
-/* the values that differ from what the app holds right now */
 function rows(){
  var s=sh(),b=bt(),out=[];
- function add(id,val,L,i,def){
-  if(val==='')return;
-  var d=(i!=null)?defW(L,i):def,c=cur(id);
-  if(val!==c||(d!==undefined&&val===d&&saved[id]!==val))out.push({id:id,val:val,L:L,i:i});
+ function add(id,val,L,i){
+  var c=cur(id);
+  if(val!==''||c!=='')out.push({id:id,val:val,L:L,i:i});
  }
  LINES.forEach(function(L){
   $$e('.w[data-l="'+L.id+'"]').forEach(function(el){add(wId(L,s,b,+el.dataset.i),el.value.trim(),L,+el.dataset.i)});
-  add(pId(L,s,b,'m'),$e('.moi[data-l="'+L.id+'"]').value.trim(),L,null,defM(L));
-  add(pId(L,s,b,'fa'),$e('.faq[data-l="'+L.id+'"]').value.trim(),L);
-  add(pId(L,s,b,'ffa'),$e('.ffa[data-l="'+L.id+'"]').value.trim(),L);
-  add(bnId(L,s,b),$e('.bn[data-l="'+L.id+'"]').value.trim(),L);
+  add(pId(L,s,b,'m'),$e('.moi[data-l="'+L.id+'"]').value.trim(),L,null);
+  add(pId(L,s,b,'fa'),$e('.faq[data-l="'+L.id+'"]').value.trim(),L,null);
+  add(pId(L,s,b,'ffa'),$e('.ffa[data-l="'+L.id+'"]').value.trim(),L,null);
+  add(bnId(L,s,b),$e('.bn[data-l="'+L.id+'"]').value.trim(),L,null);
  });
  return out;
 }
@@ -1095,26 +1273,23 @@ function label(x){
  if(/_ffa$/.test(x.id))return 'Line '+ln+' · FFA';
  return 'Line '+ln+' · Batch No.';
 }
-async function save(){
- var sb=$e('#e_save'),miss=calc(),emptyAll=!$$e('.w').some(function(x){return x.value.trim()!==''});
- if(miss.length&&!forced&&!(pend.length&&emptyAll)){forced=true;sb.className='p warnb';sb.textContent='Save anyway';say('⚠️ '+miss.join(' — ')+' — press again to save anyway','wn');return}
+async function saveEntry(){
+ var sb=$e('#e_save');
  sb.disabled=true;sb.textContent='Saving...';
  try{
-  $$e('.w').forEach(function(x){var f=fix(x.value);if(f!==x.value)x.value=f});calc();
-  var list=rows();
-  if(!list.length&&!pend.length)throw new Error('Nothing new to save');
-  list.forEach(function(x){setApp(x.id,x.val);if(x.i!=null||/_m$/.test(x.id))saved[x.id]=x.val});
+  window.commitEntryToApp();
+  calc();
   var killed=pend.length;
-  pend.forEach(function(k){setApp(k.id,k.def);delete saved[k.id]});
-  pend=[];persist();
-  var tail=' — saved on this device (sync is off)';
+  pend=[];
+  if(typeof window.save==='function')window.save();
+  var tail=' — saved on this device & updated in Sheet1 & Excel tables';
   if(typeof SYNC!=='undefined'&&SYNC.pin){
-   try{await syncPush();tail=SYNC.state==='ok'?' — synced to the cloud':' — saved here, sync error'}catch(e){tail=' — saved here, sync failed: '+e.message}
+   try{await syncPush();tail=' — saved in Sheet1 & synced to cloud ✓'}catch(e){tail=' — saved on device (sync error: '+e.message+')'}
   }
-  say((list.length?('Saved '+list.length+' values'):'Cleared')+(killed?(' - reset '+killed+' cleared values'):'')+tail,'ok');ebeep(true);
+  say('Saved ✓'+(killed?(' (cleared '+killed+' fields)'):'')+tail,'ok');ebeep(true);
   $e('#e_pvCard').style.display='none';fill();calc();dirty=false;
  }catch(e){say(e.message,'no');ebeep(false)}
- sb.disabled=false;forced=false;sb.className='p';sb.textContent='Save';
+ sb.disabled=false;sb.className='p';sb.textContent='Save';
 }
 function clearAll(){
  var s=sh(),b=bt();
@@ -1122,34 +1297,34 @@ function clearAll(){
  $$e('.moi,.faq,.ffa').forEach(function(x){x.value=''});
  pend=[];
  LINES.forEach(function(L){
-  for(var i=0;i<L.n;i++)pend.push({id:wId(L,s,b,i),def:defW(L,i)});
-  pend.push({id:pId(L,s,b,'m'),def:defM(L)});pend.push({id:pId(L,s,b,'fa'),def:''});pend.push({id:pId(L,s,b,'ffa'),def:''});
+  for(var i=0;i<L.n;i++){var id=wId(L,s,b,i);pend.push({id:id,def:''});setApp(id,'');delete saved[id]}
+  var idm=pId(L,s,b,'m');pend.push({id:idm,def:defM(L)});setApp(idm,defM(L));delete saved[idm];
+  setApp(pId(L,s,b,'fa'),'');setApp(pId(L,s,b,'ffa'),'');
+  syncBatchToRows(L,s,b);
  });
- calc();dirty=true;
- say('Everything cleared except the Batch No. - press Save to reset it in the app too','ok');ebeep(true);
+ persist();
+ if(typeof window.save==='function')window.save();
+ calc();dirty=false;
+ say('Cleared weights & QC for Shift '+SN[s]+' Batch '+b+' ✓','ok');ebeep(true);
 }
 function preview(){
- var miss=calc();
- if(miss.length){say(miss.join(' — ')+' - fill the missing ones first','wn');return}
- var list=rows();
+ var list=rows().filter(function(x){return x.val!==''});
  if(!list.length){say('No values entered','no');return}
  $e('#e_pvCard').style.display='';
- $e('#e_pv').innerHTML='<table><tr><th>Field</th><th>Before</th><th>After</th></tr>'+list.map(function(x){var o=cur(x.id);return '<tr><td>'+label(x)+'</td><td>'+(o===''?'-':o)+'</td><td><b>'+x.val+'</b></td></tr>'}).join('')+'</table>';
- say('Preview ready ('+list.length+' values) - press Save','ok');
+ $e('#e_pv').innerHTML='<table><tr><th>Field</th><th>Current in Sheet1</th><th>Entry Value</th></tr>'+list.map(function(x){var o=cur(x.id);return '<tr><td>'+label(x)+'</td><td>'+(o===''?'-':o)+'</td><td><b>'+x.val+'</b></td></tr>'}).join('')+'</table>';
+ say('Preview ready ('+list.length+' values)','ok');
 }
-/* events */
 var sec=gi('ent');
-['input','change'].forEach(function(t){sec.addEventListener(t,function(ev){ev.stopPropagation()})});   /* typing here must not trigger the app's table handlers */
-['e_sh','e_bt'].forEach(function(id){gi(id).addEventListener('change',function(){pend=[];forced=false;build()})});
+['input','change'].forEach(function(t){sec.addEventListener(t,function(ev){ev.stopPropagation()})});
+['e_sh','e_bt'].forEach(function(id){gi(id).addEventListener('change',function(){pend=[];build()})});
 gi('e_vr').value=(typeof L3k!=='undefined'?L3k:'royal');
 gi('e_vr').addEventListener('change',function(){var t=gi('l3sel');if(t){t.value=this.value;t.dispatchEvent(new Event('change',{bubbles:true}))}});
 gi('e_snd').checked=sndOn();
 gi('e_snd').addEventListener('change',function(){try{localStorage.setItem('qe_sound',this.checked?'1':'0')}catch(e){}if(this.checked)ebeep(true)});
 gi('e_clear').addEventListener('click',clearAll);
 gi('e_prev').addEventListener('click',preview);
-gi('e_save').addEventListener('click',save);
-/* refresh from the app when the Entry page is opened and when a background sync brought new values */
-document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-pg="ent"]');if(a)setTimeout(function(){if(!dirty){fill();calc()}},0)});
+gi('e_save').addEventListener('click',saveEntry);
+document.addEventListener('click',function(ev){var a=ev.target.closest&&ev.target.closest('a[data-pg="ent"]');if(a)setTimeout(function(){fill();calc()},0)});
 var lastSeen=(typeof SYNC!=='undefined')?SYNC.last:0;
 setInterval(function(){
  if(typeof SYNC==='undefined'||SYNC.last===lastSeen)return;
